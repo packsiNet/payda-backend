@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="PayDa.API/PayDa.API.csproj" />
+  <Project Path="PayDa.Application/PayDa.Application.csproj" />
+  <Project Path="PayDa.Domain/PayDa.Domain.csproj" />
+  <Project Path="PayDa.Infrastructure/PayDa.Infrastructure.csproj" />
+</Solution>

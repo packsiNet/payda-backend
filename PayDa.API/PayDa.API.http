@@ -1,0 +1,6 @@
+@PayDa.API_HostAddress = http://localhost:5196
+
+GET {{PayDa.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

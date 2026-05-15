@@ -1,0 +1,55 @@
+using PayDa.Domain.Common;
+using PayDa.Domain.Enums;
+
+namespace PayDa.Domain.Entities;
+
+public class Request : BaseEntity
+{
+    public Guid UserId { get; private set; }
+    public User User { get; private set; } = default!;
+
+    public RequestType Type { get; private set; }
+    public Currency Currency { get; private set; }
+    public decimal Amount { get; private set; }
+
+    public RateType RateType { get; private set; }
+    public decimal RateValue { get; private set; }
+
+    public decimal CommissionPercent { get; private set; }
+    public decimal CommissionAmount { get; private set; }
+
+    public List<PaymentMethod> PaymentMethods { get; private set; } = new();
+
+    public Guid ReceiverId { get; private set; }
+    public Receiver Receiver { get; private set; } = default!;
+
+    public RequestStatus Status { get; private set; } = RequestStatus.Pending;
+    public DateTime ExpiresAt { get; private set; }
+
+    public Guid? MatchId { get; private set; }
+    public Match? Match { get; private set; }
+
+    private Request() { }
+
+    public static Request Create(Guid userId, RequestType type, Currency currency,
+        decimal amount, RateType rateType, decimal rateValue, decimal commissionPercent,
+        List<PaymentMethod> paymentMethods, Guid receiverId, DateTime expiresAt) => new()
+    {
+        UserId = userId,
+        Type = type,
+        Currency = currency,
+        Amount = amount,
+        RateType = rateType,
+        RateValue = rateValue,
+        CommissionPercent = commissionPercent,
+        CommissionAmount = amount * (commissionPercent / 100),
+        PaymentMethods = paymentMethods,
+        ReceiverId = receiverId,
+        ExpiresAt = expiresAt,
+        Status = RequestStatus.Pending
+    };
+
+    public void SetMatched() { Status = RequestStatus.Matched; UpdatedAt = DateTime.UtcNow; }
+    public void Cancel() { Status = RequestStatus.Cancelled; UpdatedAt = DateTime.UtcNow; }
+    public void Expire() { Status = RequestStatus.Expired; UpdatedAt = DateTime.UtcNow; }
+}
