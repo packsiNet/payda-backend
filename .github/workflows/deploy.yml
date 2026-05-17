@@ -160,17 +160,18 @@ jobs:
           # ─────────────────────────────────────────────────────────────────
           # 2. .NET 10 ASP.NET Core Runtime
           # ─────────────────────────────────────────────────────────────────
-          if ! dotnet --version 2>/dev/null | grep -q '^10\.'; then
+          if ! /usr/share/dotnet/dotnet --list-runtimes 2>/dev/null | grep -q 'Microsoft.AspNetCore.App 10\.'; then
             log "Installing .NET 10 ASP.NET Core Runtime..."
             wget -q https://dot.net/v1/dotnet-install.sh -O /tmp/dotnet-install.sh
             chmod +x /tmp/dotnet-install.sh
             /tmp/dotnet-install.sh --channel 10.0 --runtime aspnetcore --install-dir /usr/share/dotnet
             ln -sf /usr/share/dotnet/dotnet /usr/bin/dotnet
+            chmod -R a+rX /usr/share/dotnet
             echo 'export DOTNET_ROOT=/usr/share/dotnet' > /etc/profile.d/dotnet.sh
             rm -f /tmp/dotnet-install.sh
           fi
           export DOTNET_ROOT=/usr/share/dotnet
-          log ".NET version: $(dotnet --version)"
+          log ".NET runtime: $(/usr/share/dotnet/dotnet --list-runtimes 2>/dev/null | grep 'AspNetCore' || echo 'not found')"
 
           # ─────────────────────────────────────────────────────────────────
           # 3. PostgreSQL
@@ -320,12 +321,13 @@ jobs:
           Requires=postgresql.service
 
           [Service]
-          Type=notify
+          Type=exec
           WorkingDirectory=${DEPLOY_PATH}
-          ExecStart=/usr/bin/dotnet ${DEPLOY_PATH}/PayDa.API.dll
+          ExecStart=/usr/share/dotnet/dotnet ${DEPLOY_PATH}/PayDa.API.dll
           Restart=on-failure
           RestartSec=10
           KillSignal=SIGINT
+          TimeoutStartSec=120
           User=${SERVICE_USER}
           Group=${SERVICE_USER}
           Environment=ASPNETCORE_ENVIRONMENT=Production
