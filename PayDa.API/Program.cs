@@ -2,12 +2,14 @@ using System.Text;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using PayDa.API.Middleware;
 using PayDa.Application.Auth.Commands.TelegramLogin;
 using PayDa.Application.Common.Behaviors;
 using PayDa.Application.Common.Interfaces;
 using PayDa.Infrastructure;
+using PayDa.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,6 +51,13 @@ builder.Services.AddCors(opts => opts.AddDefaultPolicy(p =>
     p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
 
 var app = builder.Build();
+
+// Auto-apply EF Core migrations on startup
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();
+}
 
 app.UseSwagger();
 app.UseSwaggerUI();

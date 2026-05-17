@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using PayDa.Application.Transactions.Commands.ConfirmPayment;
 using PayDa.Application.Transactions.Commands.SettleTransaction;
 using PayDa.Application.Transactions.Commands.UploadScreenshot;
+using PayDa.Application.Transactions.Queries.GetMyTransactions;
 using PayDa.Application.Transactions.Queries.GetTransactionDetail;
+using PayDa.Domain.Enums;
 
 namespace PayDa.API.Controllers;
 
@@ -16,6 +18,14 @@ public class TransactionsController : ControllerBase
     private readonly ISender _sender;
 
     public TransactionsController(ISender sender) => _sender = sender;
+
+    [HttpGet]
+    public async Task<IActionResult> GetMyTransactions(
+        [FromQuery] RequestType? type,
+        [FromQuery] TransactionStatus? status,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 20)
+        => Ok(await _sender.Send(new GetMyTransactionsQuery(type, status, page, pageSize)));
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetDetail(Guid id)
