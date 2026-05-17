@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -15,13 +15,13 @@ namespace PayDa.Infrastructure.Migrations
                 name: "ExchangeRates",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Currency = table.Column<int>(type: "int", nullable: false),
-                    MarketRate = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    InstantRate = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    UpdatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Currency = table.Column<int>(type: "integer", nullable: false),
+                    MarketRate = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
+                    InstantRate = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
+                    UpdatedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -32,14 +32,14 @@ namespace PayDa.Infrastructure.Migrations
                 name: "Tiers",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Order = table.Column<int>(type: "int", nullable: false),
-                    MaxActiveRequests = table.Column<int>(type: "int", nullable: false),
-                    MaxAmountPerRequest = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    RequiredCompletedTransactions = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Order = table.Column<int>(type: "integer", nullable: false),
+                    MaxActiveRequests = table.Column<int>(type: "integer", nullable: false),
+                    MaxAmountPerRequest = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
+                    RequiredCompletedTransactions = table.Column<int>(type: "integer", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -50,25 +50,25 @@ namespace PayDa.Infrastructure.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     TelegramId = table.Column<long>(type: "bigint", nullable: false),
-                    TelegramUsername = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    FirstName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    LastName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
-                    DateOfBirth = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Country = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    KycStatus = table.Column<int>(type: "int", nullable: false),
-                    SelfieImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DocumentImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    KycSubmittedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    KycReviewedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Role = table.Column<int>(type: "int", nullable: false),
-                    IsTrusted = table.Column<bool>(type: "bit", nullable: false),
-                    TierId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CompletedTransactionsCount = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    TelegramUsername = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    FirstName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    LastName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    PhoneNumber = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: true),
+                    DateOfBirth = table.Column<string>(type: "text", nullable: true),
+                    Country = table.Column<string>(type: "text", nullable: true),
+                    KycStatus = table.Column<int>(type: "integer", nullable: false),
+                    SelfieImageUrl = table.Column<string>(type: "text", nullable: true),
+                    DocumentImageUrl = table.Column<string>(type: "text", nullable: true),
+                    KycSubmittedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    KycReviewedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Role = table.Column<int>(type: "integer", nullable: false),
+                    IsTrusted = table.Column<bool>(type: "boolean", nullable: false),
+                    TierId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CompletedTransactionsCount = table.Column<int>(type: "integer", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -85,15 +85,15 @@ namespace PayDa.Infrastructure.Migrations
                 name: "Receivers",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    NationalId = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    MobileNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    IBAN = table.Column<string>(type: "nvarchar(34)", maxLength: 34, nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    FirstName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    LastName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    NationalId = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    MobileNumber = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    IBAN = table.Column<string>(type: "character varying(34)", maxLength: 34, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -110,13 +110,13 @@ namespace PayDa.Infrastructure.Migrations
                 name: "Matches",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SenderRequestId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ReceiverRequestId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    IsAgentInvolved = table.Column<bool>(type: "bit", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    SenderRequestId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ReceiverRequestId = table.Column<Guid>(type: "uuid", nullable: false),
+                    IsAgentInvolved = table.Column<bool>(type: "boolean", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -127,22 +127,22 @@ namespace PayDa.Infrastructure.Migrations
                 name: "Requests",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Type = table.Column<int>(type: "int", nullable: false),
-                    Currency = table.Column<int>(type: "int", nullable: false),
-                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    RateType = table.Column<int>(type: "int", nullable: false),
-                    RateValue = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    CommissionPercent = table.Column<decimal>(type: "decimal(5,2)", nullable: false),
-                    CommissionAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    PaymentMethods = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ReceiverId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    ExpiresAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    MatchId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false),
+                    Currency = table.Column<int>(type: "integer", nullable: false),
+                    Amount = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
+                    RateType = table.Column<int>(type: "integer", nullable: false),
+                    RateValue = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
+                    CommissionPercent = table.Column<decimal>(type: "numeric(5,2)", nullable: false),
+                    CommissionAmount = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
+                    PaymentMethods = table.Column<string>(type: "text", nullable: false),
+                    ReceiverId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    ExpiresAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    MatchId = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -170,15 +170,15 @@ namespace PayDa.Infrastructure.Migrations
                 name: "Transactions",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    MatchId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ScreenshotUrl = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    PaidAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ConfirmedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    SettledAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    MatchId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ScreenshotUrl = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    PaidAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ConfirmedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    SettledAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {

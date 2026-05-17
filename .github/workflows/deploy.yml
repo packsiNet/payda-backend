@@ -173,41 +173,21 @@ jobs:
           log ".NET version: $(dotnet --version)"
 
           # ─────────────────────────────────────────────────────────────────
-          # 3. SQL Server 2022
+          # 3. PostgreSQL
           # ─────────────────────────────────────────────────────────────────
-          if ! systemctl is-active --quiet mssql-server 2>/dev/null; then
-            log "Installing SQL Server 2022..."
-
-            curl -fsSL https://packages.microsoft.com/keys/microsoft.asc \
-              | gpg --dearmor > /usr/share/keyrings/microsoft-prod.gpg
-
-            printf 'deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft-prod.gpg] https://packages.microsoft.com/ubuntu/22.04/mssql-server-2022 jammy main\n' \
-              > /etc/apt/sources.list.d/mssql-server.list
-
-            apt-get update -qq
-            apt-get install -y -qq mssql-server
-
-            MSSQL_SA_PASSWORD="${DB_SA_PASSWORD}" MSSQL_PID="Developer" \
-              /opt/mssql/bin/mssql-conf -n setup accept-eula
-
-            systemctl start mssql-server
-            systemctl enable mssql-server
-
-            log "Waiting for SQL Server to initialize (30s)..."
-            sleep 30
+          if ! systemctl is-active --quiet postgresql 2>/dev/null; then
+            log "Installing PostgreSQL..."
+            apt-get install -y -qq postgresql postgresql-contrib
+            systemctl start postgresql
+            systemctl enable postgresql
           fi
-          log "SQL Server status: $(systemctl is-active mssql-server)"
+          log "PostgreSQL status: $(systemctl is-active postgresql)"
 
-          # SQL Server command-line tools
-          if [ ! -f /opt/mssql-tools18/bin/sqlcmd ]; then
-            log "Installing mssql-tools18..."
-            printf 'deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft-prod.gpg] https://packages.microsoft.com/ubuntu/22.04/prod jammy main\n' \
-              >> /etc/apt/sources.list.d/mssql-tools.list
-            apt-get update -qq
-            ACCEPT_EULA=Y apt-get install -y -qq mssql-tools18 unixodbc-dev
-            echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' > /etc/profile.d/mssql.sh
-          fi
-          export PATH="$PATH:/opt/mssql-tools18/bin"
+          # Create database user and database if not exist
+          sudo -u postgres psql -tc "SELECT 1 FROM pg_user WHERE usename='payda_db'" | grep -q 1 || \
+            sudo -u postgres psql -c "CREATE USER payda_db WITH PASSWORD '${DB_SA_PASSWORD}';"
+          sudo -u postgres psql -tc "SELECT 1 FROM pg_database WHERE datname='PayDaDb'" | grep -q 1 || \
+            sudo -u postgres createdb -O payda_db PayDaDb
 
           # ─────────────────────────────────────────────────────────────────
           # 4. Nginx
@@ -308,7 +288,7 @@ jobs:
           cat > "${DEPLOY_PATH}/appsettings.Production.json" << JSONEOF
           {
             "ConnectionStrings": {
-              "DefaultConnection": "Server=localhost;Database=PayDaDb;User Id=sa;Password=${DB_SA_PASSWORD};TrustServerCertificate=True;Encrypt=True"
+              "DefaultConnection": "Host=localhost;Database=PayDaDb;Username=payda_db;Password=${DB_SA_PASSWORD}"
             },
             "Jwt": {
               "Secret": "${JWT_SECRET}"
@@ -333,8 +313,8 @@ jobs:
             > /etc/systemd/system/${SERVICE_NAME}.service
           [Unit]
           Description=PayDa API — ASP.NET Core 10
-          After=network.target mssql-server.service
-          Requires=mssql-server.service
+          After=network.target postgresql.service
+          Requires=postgresql.service
 
           [Service]
           Type=notify

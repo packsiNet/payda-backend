@@ -12,7 +12,7 @@ public static class DependencyInjection
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<AppDbContext>(opts =>
-            opts.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+            opts.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
         services.AddScoped<IAppDbContext>(p => p.GetRequiredService<AppDbContext>());
         services.AddScoped<ITelegramAuthService, TelegramAuthService>();
