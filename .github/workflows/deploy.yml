@@ -89,8 +89,11 @@ jobs:
       - name: Configure SSH
         run: |
           mkdir -p ~/.ssh
-          printf '%s\n' "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/deploy_key
+          # کلید به صورت base64 در Secret ذخیره شده — decode می‌کنیم
+          echo "${{ secrets.SERVER_SSH_KEY }}" | base64 -d > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
+          # تأیید فرمت کلید
+          ssh-keygen -l -f ~/.ssh/deploy_key || { echo "ERROR: SSH key is invalid"; exit 1; }
           ssh-keyscan -p "${{ secrets.SERVER_PORT }}" -H "${{ secrets.SERVER_HOST }}" \
             >> ~/.ssh/known_hosts 2>/dev/null
 
@@ -113,7 +116,7 @@ jobs:
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
+          key_path: ~/.ssh/deploy_key
           port: ${{ secrets.SERVER_PORT }}
           envs: DB_SA_PASSWORD,JWT_SECRET,TELEGRAM_BOT_TOKEN,STORAGE_CONNECTION_STRING
           command_timeout: 30m
