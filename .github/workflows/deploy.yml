@@ -162,13 +162,14 @@ jobs:
           # ─────────────────────────────────────────────────────────────────
           if ! dotnet --version 2>/dev/null | grep -q '^10\.'; then
             log "Installing .NET 10 ASP.NET Core Runtime..."
-            wget -q https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb \
-                 -O /tmp/ms-prod.deb
-            dpkg -i /tmp/ms-prod.deb
-            apt-get update -qq
-            apt-get install -y -qq aspnetcore-runtime-10.0
-            rm -f /tmp/ms-prod.deb
+            wget -q https://dot.net/v1/dotnet-install.sh -O /tmp/dotnet-install.sh
+            chmod +x /tmp/dotnet-install.sh
+            /tmp/dotnet-install.sh --channel 10.0 --runtime aspnetcore --install-dir /usr/share/dotnet
+            ln -sf /usr/share/dotnet/dotnet /usr/bin/dotnet
+            echo 'export DOTNET_ROOT=/usr/share/dotnet' > /etc/profile.d/dotnet.sh
+            rm -f /tmp/dotnet-install.sh
           fi
+          export DOTNET_ROOT=/usr/share/dotnet
           log ".NET version: $(dotnet --version)"
 
           # ─────────────────────────────────────────────────────────────────
@@ -222,10 +223,7 @@ jobs:
           # ─────────────────────────────────────────────────────────────────
           if ! command -v certbot &>/dev/null; then
             log "Installing Certbot..."
-            systemctl enable --now snapd.socket || true
-            sleep 5
-            snap install --classic certbot
-            ln -sf /snap/bin/certbot /usr/bin/certbot
+            apt-get install -y -qq certbot python3-certbot-nginx
           fi
 
           # ─────────────────────────────────────────────────────────────────
@@ -249,6 +247,7 @@ jobs:
                   proxy_set_header   X-Real-IP $remote_addr;
                   proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
                   proxy_set_header   X-Forwarded-Proto $scheme;
+                  proxy_set_header   X-Forwarded-Host $host;
                   proxy_read_timeout 300;
                   proxy_connect_timeout 300;
                   client_max_body_size 50M;
@@ -348,6 +347,7 @@ jobs:
           Group=${SERVICE_USER}
           Environment=ASPNETCORE_ENVIRONMENT=Production
           Environment=ASPNETCORE_URLS=http://127.0.0.1:${APP_PORT}
+          Environment=DOTNET_ROOT=/usr/share/dotnet
           Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=false
           StandardOutput=journal
           StandardError=journal
