@@ -6,4 +6,4 @@ public interface ITelegramAuthService
     TelegramUserData ParseInitData(string initData);
 }
 
-public record TelegramUserData(long Id, string? Username, string? FirstName, string? LastName);
+public record TelegramUserData(long Id, string? Username, string? FirstName, string? LastName, string? PhotoUrl);

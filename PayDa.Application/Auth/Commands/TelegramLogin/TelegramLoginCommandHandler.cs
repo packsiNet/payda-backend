@@ -38,11 +38,16 @@ public class TelegramLoginCommandHandler : IRequestHandler<TelegramLoginCommand,
                 .OrderBy(t => t.Order)
                 .FirstAsync(ct);
 
-            user = User.Create(telegramUser.Id, telegramUser.Username);
+            user = User.Create(telegramUser.Id, telegramUser.Username, telegramUser.FirstName, telegramUser.LastName, telegramUser.PhotoUrl);
             user.UpgradeTier(bronzeTier.Id);
             _context.Users.Add(user);
-            await _context.SaveChangesAsync(ct);
         }
+        else
+        {
+            user!.UpdateTelegramProfile(telegramUser.Username, telegramUser.FirstName, telegramUser.LastName, telegramUser.PhotoUrl);
+        }
+
+        await _context.SaveChangesAsync(ct);
 
         var token = _jwtService.GenerateToken(user!);
         return new TelegramLoginResult(token, isNewUser, user!.KycStatus);

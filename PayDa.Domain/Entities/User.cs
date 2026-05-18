@@ -9,6 +9,7 @@ public class User : BaseEntity
     public string? TelegramUsername { get; private set; }
     public string? FirstName { get; private set; }
     public string? LastName { get; private set; }
+    public string? ProfilePhotoUrl { get; private set; }
     public string? PhoneNumber { get; private set; }
     public string? DateOfBirth { get; private set; }
     public string? Country { get; private set; }
@@ -34,11 +35,23 @@ public class User : BaseEntity
 
     private User() { }
 
-    public static User Create(long telegramId, string? username = null) => new()
+    public static User Create(long telegramId, string? username, string? firstName, string? lastName, string? profilePhotoUrl) => new()
     {
         TelegramId = telegramId,
-        TelegramUsername = username
+        TelegramUsername = username,
+        FirstName = firstName,
+        LastName = lastName,
+        ProfilePhotoUrl = profilePhotoUrl
     };
+
+    public void UpdateTelegramProfile(string? username, string? firstName, string? lastName, string? profilePhotoUrl)
+    {
+        TelegramUsername = username;
+        FirstName = firstName;
+        LastName = lastName;
+        ProfilePhotoUrl = profilePhotoUrl;
+        UpdatedAt = DateTime.UtcNow;
+    }
 
     public void SubmitKyc(string firstName, string lastName, string phone,
         string dateOfBirth, string selfieUrl, string documentUrl)

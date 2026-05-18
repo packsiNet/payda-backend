@@ -44,7 +44,8 @@ public class TelegramAuthService : ITelegramAuthService
             user.GetProperty("id").GetInt64(),
             user.TryGetProperty("username", out var un) ? un.GetString() : null,
             user.TryGetProperty("first_name", out var fn) ? fn.GetString() : null,
-            user.TryGetProperty("last_name", out var ln) ? ln.GetString() : null
+            user.TryGetProperty("last_name", out var ln) ? ln.GetString() : null,
+            user.TryGetProperty("photo_url", out var ph) ? ph.GetString() : null
         );
     }
 }
