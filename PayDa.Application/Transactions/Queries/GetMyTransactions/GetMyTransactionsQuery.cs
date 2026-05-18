@@ -14,6 +14,7 @@ public record MyTransactionDto(
     Guid Id,
     Guid MatchId,
     TransactionStatus Status,
+    string? ReferenceCode,
     RequestType MyRole,
     Currency Currency,
     decimal Amount,

@@ -60,6 +60,7 @@ public class GetMyTransactionsQueryHandler : IRequestHandler<GetMyTransactionsQu
                 t.Id,
                 t.MatchId,
                 t.Status,
+                t.ReferenceCode,
                 isSender ? RequestType.Send : RequestType.Receive,
                 myRequest.Currency,
                 myRequest.Amount,

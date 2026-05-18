@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PayDa.Application.Matches.Commands.CreateUserMatch;
 using PayDa.Application.Matches.Commands.MatchRequests;
 using PayDa.Application.Matches.Queries.GetMyMatches;
 
@@ -20,8 +21,15 @@ public class MatchesController : ControllerBase
         => Ok(await _sender.Send(new GetMyMatchesQuery()));
 
     [HttpPost]
+    public async Task<IActionResult> CreateMatch([FromBody] CreateUserMatchCommand cmd)
+    {
+        var result = await _sender.Send(cmd);
+        return Ok(new { matchId = result.MatchId, message = result.Message });
+    }
+
+    [HttpPost("admin")]
     [Authorize(Roles = "Admin,Agent")]
-    public async Task<IActionResult> Match([FromBody] MatchRequestsCommand cmd)
+    public async Task<IActionResult> AdminMatch([FromBody] MatchRequestsCommand cmd)
     {
         var id = await _sender.Send(cmd);
         return Ok(new { id });

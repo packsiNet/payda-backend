@@ -27,6 +27,9 @@ public class GetMyProfileQueryHandler : IRequestHandler<GetMyProfileQuery, UserP
             user.Id, user.TelegramId, user.TelegramUsername,
             user.FirstName, user.LastName, user.KycStatus,
             user.Role, user.IsTrusted, user.Tier.Name,
-            user.Tier.Order, user.CompletedTransactionsCount);
+            user.Tier.Order, user.CompletedTransactionsCount,
+            user.PhoneNumber != null,
+            user.SelfieImageUrl,
+            user.DocumentImageUrl);
     }
 }

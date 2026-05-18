@@ -16,5 +16,8 @@ public record UserProfileDto(
     bool IsTrusted,
     string TierName,
     int TierOrder,
-    int CompletedTransactionsCount
+    int CompletedTransactionsCount,
+    bool PhoneVerified,
+    string? SelfieImageUrl,
+    string? DocumentImageUrl
 );

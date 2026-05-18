@@ -46,7 +46,6 @@ public class TransactionsController : ControllerBase
     }
 
     [HttpPost("{id}/settle")]
-    [Authorize(Roles = "Admin,Agent")]
     public async Task<IActionResult> Settle(Guid id)
     {
         await _sender.Send(new SettleTransactionCommand(id));
