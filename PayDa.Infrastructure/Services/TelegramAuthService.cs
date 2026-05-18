@@ -25,7 +25,8 @@ public class TelegramAuthService : ITelegramAuthService
         var dataCheckString = string.Join("\n",
             parsed.AllKeys!.OrderBy(k => k).Select(k => $"{k}={parsed[k]}"));
 
-        var secretKey = SHA256.HashData(Encoding.UTF8.GetBytes(_botToken));
+        using var keyHmac = new HMACSHA256(Encoding.UTF8.GetBytes("WebAppData"));
+        var secretKey = keyHmac.ComputeHash(Encoding.UTF8.GetBytes(_botToken));
         using var hmac = new HMACSHA256(secretKey);
         var computedHash = Convert.ToHexString(
             hmac.ComputeHash(Encoding.UTF8.GetBytes(dataCheckString))).ToLower();
