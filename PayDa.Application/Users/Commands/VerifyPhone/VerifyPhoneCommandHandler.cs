@@ -21,7 +21,7 @@ public class VerifyPhoneCommandHandler : IRequestHandler<VerifyPhoneCommand>
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == _currentUser.UserId, ct)
             ?? throw new NotFoundException("User not found");
 
-        user.SetPhoneNumber(cmd.PhoneNumber);
+        user.SetPhoneNumber(VerifyPhoneCommandValidator.Normalize(cmd.PhoneNumber));
         await _context.SaveChangesAsync(ct);
     }
 }
