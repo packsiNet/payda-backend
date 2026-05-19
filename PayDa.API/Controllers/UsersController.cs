@@ -29,7 +29,7 @@ public class UsersController : ControllerBase
     [HttpPost("me/phone")]
     public async Task<IActionResult> VerifyPhone([FromBody] VerifyPhoneRequest req)
     {
-        await _sender.Send(new VerifyPhoneCommand(req.TelegramResponse));
+        await _sender.Send(new VerifyPhoneCommand(req.PhoneNumber));
         return NoContent();
     }
 
@@ -81,7 +81,7 @@ public class UsersController : ControllerBase
     }
 }
 
-public record VerifyPhoneRequest(string TelegramResponse);
+public record VerifyPhoneRequest(string PhoneNumber);
 
 public record SubmitKycRequest(
     string FirstName, string LastName, string DateOfBirth,
