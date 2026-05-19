@@ -26,7 +26,7 @@ public class SubmitKycCommandHandler : IRequestHandler<SubmitKycCommand>
         var selfieUrl = await _storage.UploadAsync(cmd.SelfieImage, cmd.SelfieFileName, "kyc/selfies", ct);
         var documentUrl = await _storage.UploadAsync(cmd.DocumentImage, cmd.DocumentFileName, "kyc/documents", ct);
 
-        user.SubmitKyc(cmd.FirstName, cmd.LastName, cmd.PhoneNumber, cmd.DateOfBirth, selfieUrl, documentUrl);
+        user.SubmitKyc(cmd.FirstName, cmd.LastName, cmd.DateOfBirth, selfieUrl, documentUrl);
         await _context.SaveChangesAsync(ct);
     }
 }

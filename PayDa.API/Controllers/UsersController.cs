@@ -6,6 +6,7 @@ using PayDa.Application.Users.Commands.RejectKyc;
 using PayDa.Application.Users.Commands.SetTrusted;
 using PayDa.Application.Users.Commands.SetUserRole;
 using PayDa.Application.Users.Commands.SubmitKyc;
+using PayDa.Application.Users.Commands.VerifyPhone;
 using PayDa.Application.Users.Queries.GetAllUsers;
 using PayDa.Application.Users.Queries.GetMyProfile;
 using PayDa.Domain.Enums;
@@ -25,11 +26,18 @@ public class UsersController : ControllerBase
     public async Task<IActionResult> GetMyProfile()
         => Ok(await _sender.Send(new GetMyProfileQuery()));
 
+    [HttpPost("me/phone")]
+    public async Task<IActionResult> VerifyPhone([FromBody] VerifyPhoneRequest req)
+    {
+        await _sender.Send(new VerifyPhoneCommand(req.PhoneNumber));
+        return NoContent();
+    }
+
     [HttpPost("me/kyc")]
     public async Task<IActionResult> SubmitKyc([FromForm] SubmitKycRequest req)
     {
         await _sender.Send(new SubmitKycCommand(
-            req.FirstName, req.LastName, req.PhoneNumber, req.DateOfBirth,
+            req.FirstName, req.LastName, req.DateOfBirth,
             req.SelfieImage.OpenReadStream(), req.SelfieImage.FileName,
             req.DocumentImage.OpenReadStream(), req.DocumentImage.FileName));
         return NoContent();
@@ -73,8 +81,10 @@ public class UsersController : ControllerBase
     }
 }
 
+public record VerifyPhoneRequest(string PhoneNumber);
+
 public record SubmitKycRequest(
-    string FirstName, string LastName, string PhoneNumber, string DateOfBirth,
+    string FirstName, string LastName, string DateOfBirth,
     IFormFile SelfieImage, IFormFile DocumentImage);
 
 public record SetTrustedRequest(bool IsTrusted);

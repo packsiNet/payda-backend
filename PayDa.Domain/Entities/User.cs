@@ -53,12 +53,20 @@ public class User : BaseEntity
         UpdatedAt = DateTime.UtcNow;
     }
 
-    public void SubmitKyc(string firstName, string lastName, string phone,
+    public void SetPhoneNumber(string phoneNumber)
+    {
+        PhoneNumber = phoneNumber;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    public void SubmitKyc(string firstName, string lastName,
         string dateOfBirth, string selfieUrl, string documentUrl)
     {
+        if (string.IsNullOrEmpty(PhoneNumber))
+            throw new InvalidOperationException("Phone number must be verified before submitting KYC.");
+
         FirstName = firstName;
         LastName = lastName;
-        PhoneNumber = phone;
         DateOfBirth = dateOfBirth;
         SelfieImageUrl = selfieUrl;
         DocumentImageUrl = documentUrl;
