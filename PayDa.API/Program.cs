@@ -1,5 +1,6 @@
 using System.Text;
 using FluentValidation;
+using Microsoft.OpenApi;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -19,6 +20,24 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new() { Title = "PayDa API", Version = "v1" });
+
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "توکن JWT را اینجا وارد کنید (بدون نوشتن Bearer)"
+    });
+
+    c.AddSecurityRequirement(doc => new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecuritySchemeReference("Bearer", doc),
+            new List<string>()
+        }
+    });
 });
 
 builder.Services.AddMediatR(cfg =>
@@ -68,6 +87,7 @@ using (var scope = app.Services.CreateScope())
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseCors();
+app.UseStaticFiles();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
