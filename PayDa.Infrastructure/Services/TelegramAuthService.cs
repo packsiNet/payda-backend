@@ -48,4 +48,19 @@ public class TelegramAuthService : ITelegramAuthService
             user.TryGetProperty("photo_url", out var ph) ? ph.GetString() : null
         );
     }
+
+    public bool ValidateContactResponse(string contactResponse) => ValidateInitData(contactResponse);
+
+    public TelegramContactData ParseContactResponse(string contactResponse)
+    {
+        var parsed = HttpUtility.ParseQueryString(contactResponse);
+        var contactJson = parsed["contact"]!;
+        var contact = JsonSerializer.Deserialize<JsonElement>(contactJson);
+
+        return new TelegramContactData(
+            contact.GetProperty("phone_number").GetString()!,
+            contact.TryGetProperty("first_name", out var fn) ? fn.GetString() : null,
+            contact.GetProperty("user_id").GetInt64()
+        );
+    }
 }

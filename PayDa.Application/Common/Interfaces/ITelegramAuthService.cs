@@ -4,6 +4,9 @@ public interface ITelegramAuthService
 {
     bool ValidateInitData(string initData);
     TelegramUserData ParseInitData(string initData);
+    bool ValidateContactResponse(string contactResponse);
+    TelegramContactData ParseContactResponse(string contactResponse);
 }
 
 public record TelegramUserData(long Id, string? Username, string? FirstName, string? LastName, string? PhotoUrl);
+public record TelegramContactData(string PhoneNumber, string? FirstName, long UserId);
