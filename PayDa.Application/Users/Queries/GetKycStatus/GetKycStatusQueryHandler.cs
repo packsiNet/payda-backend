@@ -25,6 +25,7 @@ public class GetKycStatusQueryHandler : IRequestHandler<GetKycStatusQuery, KycSt
 
         var displayName = user.KycStatus switch
         {
+            KycStatus.NotSubmitted => "ثبت نشده",
             KycStatus.Pending => "در حال بررسی",
             KycStatus.Approved => "تایید شده",
             KycStatus.Rejected => "رد شده",

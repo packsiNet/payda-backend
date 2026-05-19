@@ -14,7 +14,7 @@ public class User : BaseEntity
     public string? DateOfBirth { get; private set; }
     public string? Country { get; private set; }
 
-    public KycStatus KycStatus { get; private set; } = KycStatus.Pending;
+    public KycStatus KycStatus { get; private set; } = KycStatus.NotSubmitted;
     public string? SelfieImageUrl { get; private set; }
     public string? DocumentImageUrl { get; private set; }
     public DateTime? KycSubmittedAt { get; private set; }
