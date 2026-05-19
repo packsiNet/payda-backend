@@ -16,11 +16,7 @@ public static class DependencyInjection
 
         services.AddScoped<IAppDbContext>(p => p.GetRequiredService<AppDbContext>());
         services.AddScoped<ITelegramAuthService, TelegramAuthService>();
-        var storageConnection = configuration["Storage:ConnectionString"];
-        if (string.IsNullOrWhiteSpace(storageConnection) || storageConnection.StartsWith("YOUR_"))
-            services.AddScoped<IStorageService, LocalStorageService>();
-        else
-            services.AddScoped<IStorageService, StorageService>();
+        services.AddScoped<IStorageService, LocalStorageService>();
         services.AddScoped<IJwtService, JwtService>();
 
         return services;
