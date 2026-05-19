@@ -36,6 +36,7 @@ public class ExceptionHandlingMiddleware
             NotFoundException => (HttpStatusCode.NotFound, exception.Message, (IDictionary<string, string[]>?)null),
             ForbiddenException => (HttpStatusCode.Forbidden, exception.Message, null),
             UnauthorizedException => (HttpStatusCode.Unauthorized, exception.Message, null),
+            BadRequestException => (HttpStatusCode.BadRequest, exception.Message, null),
             _ => (HttpStatusCode.InternalServerError, "An unexpected error occurred.", null)
         };
 

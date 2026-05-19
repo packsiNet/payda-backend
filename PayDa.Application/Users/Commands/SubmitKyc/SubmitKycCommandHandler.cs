@@ -23,6 +23,9 @@ public class SubmitKycCommandHandler : IRequestHandler<SubmitKycCommand>
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == _currentUser.UserId, ct)
             ?? throw new NotFoundException("User not found");
 
+        if (string.IsNullOrEmpty(user.PhoneNumber))
+            throw new BadRequestException("Phone number must be verified before submitting KYC.");
+
         var selfieUrl = await _storage.UploadAsync(cmd.SelfieImage, cmd.SelfieFileName, "kyc/selfies", ct);
         var documentUrl = await _storage.UploadAsync(cmd.DocumentImage, cmd.DocumentFileName, "kyc/documents", ct);
 
