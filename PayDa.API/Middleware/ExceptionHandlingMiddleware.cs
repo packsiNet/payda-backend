@@ -37,7 +37,7 @@ public class ExceptionHandlingMiddleware
             ForbiddenException => (HttpStatusCode.Forbidden, exception.Message, null),
             UnauthorizedException => (HttpStatusCode.Unauthorized, exception.Message, null),
             BadRequestException => (HttpStatusCode.BadRequest, exception.Message, null),
-            _ => (HttpStatusCode.InternalServerError, "An unexpected error occurred.", null)
+            _ => (HttpStatusCode.InternalServerError, $"[DEBUG] {exception.GetType().Name}: {exception.Message}", null)
         };
 
         context.Response.ContentType = "application/json";
