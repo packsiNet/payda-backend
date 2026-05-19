@@ -8,6 +8,7 @@ using PayDa.Application.Users.Commands.SetUserRole;
 using PayDa.Application.Users.Commands.SubmitKyc;
 using PayDa.Application.Users.Commands.VerifyPhone;
 using PayDa.Application.Users.Queries.GetAllUsers;
+using PayDa.Application.Users.Queries.GetKycStatus;
 using PayDa.Application.Users.Queries.GetMyProfile;
 using PayDa.Domain.Enums;
 
@@ -32,6 +33,10 @@ public class UsersController : ControllerBase
         await _sender.Send(new VerifyPhoneCommand(req.PhoneNumber));
         return NoContent();
     }
+
+    [HttpGet("me/kyc")]
+    public async Task<IActionResult> GetKycStatus()
+        => Ok(await _sender.Send(new GetKycStatusQuery()));
 
     [HttpPost("me/kyc")]
     public async Task<IActionResult> SubmitKyc([FromForm] SubmitKycRequest req)
