@@ -26,7 +26,7 @@ public class GetMyRequestsQueryHandler : IRequestHandler<GetMyRequestsQuery, Lis
 
         return [.. rows.Select(r =>
         {
-            var hasFullName = r.User.FirstName != null && r.User.LastName != null;
+            var hasFullName = !string.IsNullOrEmpty(r.User.FirstName) && !string.IsNullOrEmpty(r.User.LastName);
             return new RequestSummaryDto(
                 r.Id,
                 r.Type,

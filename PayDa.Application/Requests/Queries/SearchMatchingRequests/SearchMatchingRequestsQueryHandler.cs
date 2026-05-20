@@ -17,7 +17,7 @@ public class SearchMatchingRequestsQueryHandler
     {
         var oppositeType = query.Type == RequestType.Send ? RequestType.Receive : RequestType.Send;
 
-        return await _context.Requests
+        var rows = await _context.Requests
             .Include(r => r.User).ThenInclude(u => u.Tier)
             .Where(r =>
                 r.Type == oppositeType &&
@@ -26,14 +26,15 @@ public class SearchMatchingRequestsQueryHandler
                 r.Status == RequestStatus.Pending)
             .OrderByDescending(r => r.User.IsTrusted)
             .ThenBy(r => r.CreatedAt)
-            .Select(r => new MatchingRequestDto(
+            .ToListAsync(ct);
+
+        return rows.Select(r =>
+        {
+            var hasFullName = !string.IsNullOrEmpty(r.User.FirstName) && !string.IsNullOrEmpty(r.User.LastName);
+            return new MatchingRequestDto(
                 r.Id,
-                r.User.FirstName != null && r.User.LastName != null
-                    ? $"{r.User.FirstName[0]}{r.User.LastName[0]}"
-                    : "??",
-                r.User.FirstName != null && r.User.LastName != null
-                    ? $"{r.User.FirstName} {r.User.LastName[0]}."
-                    : "Unknown",
+                hasFullName ? $"{r.User.FirstName![0]}{r.User.LastName![0]}" : "??",
+                hasFullName ? $"{r.User.FirstName} {r.User.LastName![0]}." : "Unknown",
                 r.User.Tier.Order,
                 r.User.Tier.Name,
                 r.User.IsTrusted,
@@ -41,7 +42,7 @@ public class SearchMatchingRequestsQueryHandler
                 r.RateValue,
                 r.PaymentMethods.Select(p => p.ToString()).ToList(),
                 r.CreatedAt
-            ))
-            .ToListAsync(ct);
+            );
+        }).ToList();
     }
 }

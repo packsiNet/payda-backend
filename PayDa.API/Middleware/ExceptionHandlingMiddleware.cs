@@ -37,13 +37,13 @@ public class ExceptionHandlingMiddleware
             ForbiddenException => (HttpStatusCode.Forbidden, exception.Message, null),
             UnauthorizedException => (HttpStatusCode.Unauthorized, exception.Message, null),
             BadRequestException => (HttpStatusCode.BadRequest, exception.Message, null),
-            _ => (HttpStatusCode.InternalServerError, exception.Message, null)
+            _ => (HttpStatusCode.InternalServerError, "An unexpected error occurred.", null)
         };
 
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)statusCode;
 
-        var response = new { message, errors, stackTrace = exception.StackTrace };
+        var response = new { message, errors };
         await context.Response.WriteAsync(JsonSerializer.Serialize(response,
             new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }));
     }
