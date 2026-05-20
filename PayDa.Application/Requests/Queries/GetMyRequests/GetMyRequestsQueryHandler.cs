@@ -24,7 +24,7 @@ public class GetMyRequestsQueryHandler : IRequestHandler<GetMyRequestsQuery, Lis
             .OrderByDescending(r => r.CreatedAt)
             .ToListAsync(ct);
 
-        return rows.Select(r =>
+        return [.. rows.Select(r =>
         {
             var hasFullName = r.User.FirstName != null && r.User.LastName != null;
             return new RequestSummaryDto(
@@ -33,7 +33,7 @@ public class GetMyRequestsQueryHandler : IRequestHandler<GetMyRequestsQuery, Lis
                 r.Currency,
                 r.Amount,
                 r.RateValue,
-                r.PaymentMethods.Select(p => p.ToString()).ToList(),
+                [.. r.PaymentMethods.Select(p => p.ToString())],
                 r.Status,
                 r.ExpiresAt,
                 r.CreatedAt,
@@ -48,6 +48,6 @@ public class GetMyRequestsQueryHandler : IRequestHandler<GetMyRequestsQuery, Lis
                 r.User.Tier.Name,
                 r.User.Tier.Order
             );
-        }).ToList();
+        })];
     }
 }
