@@ -26,8 +26,8 @@ public class MatchRequestsCommandHandler : IRequestHandler<MatchRequestsCommand,
         var match = Match.Create(cmd.SenderRequestId, cmd.ReceiverRequestId, cmd.IsAgentInvolved);
         _context.Matches.Add(match);
 
-        senderRequest.SetMatched();
-        receiverRequest.SetMatched();
+        senderRequest.SetMatched(match.Id);
+        receiverRequest.SetMatched(match.Id);
 
         var transaction = Transaction.Create(match.Id);
         _context.Transactions.Add(transaction);

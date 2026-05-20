@@ -49,7 +49,7 @@ public class Request : BaseEntity
         Status = RequestStatus.Pending
     };
 
-    public void SetMatched() { Status = RequestStatus.Matched; UpdatedAt = DateTime.UtcNow; }
+    public void SetMatched(Guid matchId) { Status = RequestStatus.Matched; MatchId = matchId; UpdatedAt = DateTime.UtcNow; }
     public void Cancel() { Status = RequestStatus.Cancelled; UpdatedAt = DateTime.UtcNow; }
     public void Expire() { Status = RequestStatus.Expired; UpdatedAt = DateTime.UtcNow; }
 }

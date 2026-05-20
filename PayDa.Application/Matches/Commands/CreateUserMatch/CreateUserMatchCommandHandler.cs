@@ -48,8 +48,8 @@ public class CreateUserMatchCommandHandler : IRequestHandler<CreateUserMatchComm
         var match = Match.Create(senderRequestId, receiverRequestId, isAgentInvolved: false);
         _context.Matches.Add(match);
 
-        myRequest.SetMatched();
-        otherRequest.SetMatched();
+        myRequest.SetMatched(match.Id);
+        otherRequest.SetMatched(match.Id);
 
         var transaction = Transaction.Create(match.Id);
         _context.Transactions.Add(transaction);

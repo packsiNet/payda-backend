@@ -32,5 +32,11 @@ public class RequestConfiguration : IEntityTypeConfiguration<Request>
             .WithMany()
             .HasForeignKey(r => r.ReceiverId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(r => r.Match)
+            .WithMany()
+            .HasForeignKey(r => r.MatchId)
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }
