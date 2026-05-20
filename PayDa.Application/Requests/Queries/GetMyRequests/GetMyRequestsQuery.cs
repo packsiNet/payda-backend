@@ -11,7 +11,14 @@ public record RequestSummaryDto(
     Currency Currency,
     decimal Amount,
     decimal RateValue,
+    List<string> PaymentMethods,
     RequestStatus Status,
     DateTime ExpiresAt,
-    DateTime CreatedAt
+    DateTime CreatedAt,
+    string? CounterpartAvatarInitials,
+    string? CounterpartProfilePhotoUrl,
+    string? CounterpartDisplayName,
+    bool? CounterpartIsTrusted,
+    string? CounterpartTierName,
+    int? CounterpartTierOrder
 );
