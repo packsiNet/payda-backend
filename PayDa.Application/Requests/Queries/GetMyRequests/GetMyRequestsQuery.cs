@@ -15,10 +15,10 @@ public record RequestSummaryDto(
     RequestStatus Status,
     DateTime ExpiresAt,
     DateTime CreatedAt,
-    string? CounterpartAvatarInitials,
-    string? CounterpartProfilePhotoUrl,
-    string? CounterpartDisplayName,
-    bool? CounterpartIsTrusted,
-    string? CounterpartTierName,
-    int? CounterpartTierOrder
+    string? OwnerAvatarInitials,
+    string? OwnerProfilePhotoUrl,
+    string? OwnerDisplayName,
+    bool OwnerIsTrusted,
+    string OwnerTierName,
+    int OwnerTierOrder
 );
