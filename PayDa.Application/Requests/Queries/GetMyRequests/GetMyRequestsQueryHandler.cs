@@ -20,9 +20,14 @@ public class GetMyRequestsQueryHandler : IRequestHandler<GetMyRequestsQuery, Lis
         if (request.Type.HasValue)
             query = query.Where(r => r.Type == request.Type.Value);
 
-        return await query
+        var rows = await query
             .OrderByDescending(r => r.CreatedAt)
-            .Select(r => new RequestSummaryDto(
+            .ToListAsync(ct);
+
+        return rows.Select(r =>
+        {
+            var hasFullName = r.User.FirstName != null && r.User.LastName != null;
+            return new RequestSummaryDto(
                 r.Id,
                 r.Type,
                 r.Currency,
@@ -32,17 +37,17 @@ public class GetMyRequestsQueryHandler : IRequestHandler<GetMyRequestsQuery, Lis
                 r.Status,
                 r.ExpiresAt,
                 r.CreatedAt,
-                r.User.FirstName != null && r.User.LastName != null
-                    ? $"{r.User.FirstName[0]}{r.User.LastName[0]}"
-                    : r.User.TelegramUsername != null ? r.User.TelegramUsername.Substring(0, 1).ToUpper() : null,
+                hasFullName
+                    ? $"{r.User.FirstName![0]}{r.User.LastName![0]}"
+                    : r.User.TelegramUsername?[..1]?.ToUpper(),
                 r.User.ProfilePhotoUrl,
-                r.User.FirstName != null && r.User.LastName != null
+                hasFullName
                     ? $"{r.User.FirstName} {r.User.LastName}"
                     : r.User.TelegramUsername,
                 r.User.IsTrusted,
                 r.User.Tier.Name,
                 r.User.Tier.Order
-            ))
-            .ToListAsync(ct);
+            );
+        }).ToList();
     }
 }
