@@ -10,5 +10,26 @@ public record CreateRequestCommand(
     RateType RateType,
     decimal? CustomRate,
     List<PaymentMethod> PaymentMethods,
-    Guid ReceiverId
+    // Send only
+    Guid? ReceiverId,
+    // Receive only
+    List<ForeignAccountDto>? ForeignAccounts
 ) : IRequest<Guid>;
+
+public record ForeignAccountDto(
+    PaymentMethod Method,
+    string FullName,
+    // Revolut
+    string? Username,
+    string? Email,
+    // Zelle
+    string? EmailOrPhone,
+    // SEPA
+    string? Iban,
+    string? Bic,
+    string? BankName,
+    // Wire
+    string? AccountNum,
+    string? Swift,
+    string? BankAddress
+);

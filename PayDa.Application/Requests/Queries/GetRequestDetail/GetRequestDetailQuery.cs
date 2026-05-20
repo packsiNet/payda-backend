@@ -18,5 +18,21 @@ public record RequestDetailDto(
     RequestStatus Status,
     DateTime ExpiresAt,
     DateTime CreatedAt,
-    Guid ReceiverId
+    Guid? ReceiverId,
+    List<ForeignAccountDetailDto> ForeignAccounts
+);
+
+public record ForeignAccountDetailDto(
+    Guid Id,
+    PaymentMethod Method,
+    string FullName,
+    string? Username,
+    string? Email,
+    string? EmailOrPhone,
+    string? Iban,
+    string? Bic,
+    string? BankName,
+    string? AccountNum,
+    string? Swift,
+    string? BankAddress
 );

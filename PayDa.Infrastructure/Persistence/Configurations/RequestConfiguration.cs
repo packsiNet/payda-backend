@@ -31,6 +31,7 @@ public class RequestConfiguration : IEntityTypeConfiguration<Request>
         builder.HasOne(r => r.Receiver)
             .WithMany()
             .HasForeignKey(r => r.ReceiverId)
+            .IsRequired(false)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(r => r.Match)

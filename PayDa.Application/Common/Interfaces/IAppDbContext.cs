@@ -9,6 +9,7 @@ public interface IAppDbContext
     DbSet<Tier> Tiers { get; }
     DbSet<Receiver> Receivers { get; }
     DbSet<Request> Requests { get; }
+    DbSet<RequestForeignAccount> RequestForeignAccounts { get; }
     DbSet<Match> Matches { get; }
     DbSet<Transaction> Transactions { get; }
     DbSet<ExchangeRate> ExchangeRates { get; }

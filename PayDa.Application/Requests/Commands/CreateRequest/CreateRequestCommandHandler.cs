@@ -37,6 +37,14 @@ public class CreateRequestCommandHandler : IRequestHandler<CreateRequestCommand,
         if (cmd.Amount > user.Tier.MaxAmountPerRequest)
             throw new ForbiddenException($"Amount exceeds tier limit of {user.Tier.MaxAmountPerRequest}");
 
+        if (cmd.Type == RequestType.Send)
+        {
+            var receiverExists = await _context.Receivers
+                .AnyAsync(r => r.Id == cmd.ReceiverId!.Value && r.UserId == user.Id, ct);
+            if (!receiverExists)
+                throw new NotFoundException("Receiver not found");
+        }
+
         var exchangeRate = await _context.ExchangeRates
             .FirstOrDefaultAsync(r => r.Currency == cmd.Currency, ct)
             ?? throw new NotFoundException("Exchange rate not found");
@@ -60,12 +68,36 @@ public class CreateRequestCommandHandler : IRequestHandler<CreateRequestCommand,
             rateValue: rateValue,
             commissionPercent: commissionPercent,
             paymentMethods: cmd.PaymentMethods,
-            receiverId: cmd.ReceiverId,
+            receiverId: cmd.Type == RequestType.Send ? cmd.ReceiverId : null,
             expiresAt: DateTime.UtcNow.AddHours(24)
         );
 
         _context.Requests.Add(request);
         await _context.SaveChangesAsync(ct);
+
+        if (cmd.Type == RequestType.Receive && cmd.ForeignAccounts is { Count: > 0 })
+        {
+            foreach (var fa in cmd.ForeignAccounts)
+            {
+                var account = RequestForeignAccount.Create(
+                    requestId: request.Id,
+                    method: fa.Method,
+                    fullName: fa.FullName,
+                    username: fa.Username,
+                    email: fa.Email,
+                    emailOrPhone: fa.EmailOrPhone,
+                    iban: fa.Iban,
+                    bic: fa.Bic,
+                    bankName: fa.BankName,
+                    accountNum: fa.AccountNum,
+                    swift: fa.Swift,
+                    bankAddress: fa.BankAddress
+                );
+                _context.RequestForeignAccounts.Add(account);
+            }
+            await _context.SaveChangesAsync(ct);
+        }
+
         return request.Id;
     }
 }

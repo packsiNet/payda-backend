@@ -19,6 +19,7 @@ public class GetRequestDetailQueryHandler : IRequestHandler<GetRequestDetailQuer
     public async Task<RequestDetailDto> Handle(GetRequestDetailQuery request, CancellationToken ct)
     {
         var r = await _context.Requests
+            .Include(x => x.ForeignAccounts)
             .FirstOrDefaultAsync(x => x.Id == request.Id && x.UserId == _currentUser.UserId, ct)
             ?? throw new NotFoundException("Request not found");
 
@@ -26,6 +27,14 @@ public class GetRequestDetailQueryHandler : IRequestHandler<GetRequestDetailQuer
             r.Id, r.Type, r.Currency, r.Amount, r.RateType, r.RateValue,
             r.CommissionPercent, r.CommissionAmount,
             r.PaymentMethods.Select(p => p.ToString()).ToList(),
-            r.Status, r.ExpiresAt, r.CreatedAt, r.ReceiverId);
+            r.Status, r.ExpiresAt, r.CreatedAt,
+            r.ReceiverId,
+            r.ForeignAccounts.Select(f => new ForeignAccountDetailDto(
+                f.Id, f.Method, f.FullName,
+                f.Username, f.Email, f.EmailOrPhone,
+                f.Iban, f.Bic, f.BankName,
+                f.AccountNum, f.Swift, f.BankAddress
+            )).ToList()
+        );
     }
 }

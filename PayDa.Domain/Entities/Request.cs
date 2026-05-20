@@ -20,8 +20,10 @@ public class Request : BaseEntity
 
     public List<PaymentMethod> PaymentMethods { get; private set; } = new();
 
-    public Guid ReceiverId { get; private set; }
-    public Receiver Receiver { get; private set; } = default!;
+    public Guid? ReceiverId { get; private set; }
+    public Receiver? Receiver { get; private set; }
+
+    public List<RequestForeignAccount> ForeignAccounts { get; private set; } = new();
 
     public RequestStatus Status { get; private set; } = RequestStatus.Pending;
     public DateTime ExpiresAt { get; private set; }
@@ -33,7 +35,7 @@ public class Request : BaseEntity
 
     public static Request Create(Guid userId, RequestType type, Currency currency,
         decimal amount, RateType rateType, decimal rateValue, decimal commissionPercent,
-        List<PaymentMethod> paymentMethods, Guid receiverId, DateTime expiresAt) => new()
+        List<PaymentMethod> paymentMethods, Guid? receiverId, DateTime expiresAt) => new()
     {
         UserId = userId,
         Type = type,

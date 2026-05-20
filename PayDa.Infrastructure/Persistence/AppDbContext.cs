@@ -13,6 +13,7 @@ public class AppDbContext : DbContext, IAppDbContext
     public DbSet<Tier> Tiers => Set<Tier>();
     public DbSet<Receiver> Receivers => Set<Receiver>();
     public DbSet<Request> Requests => Set<Request>();
+    public DbSet<RequestForeignAccount> RequestForeignAccounts => Set<RequestForeignAccount>();
     public DbSet<Match> Matches => Set<Match>();
     public DbSet<Transaction> Transactions => Set<Transaction>();
     public DbSet<ExchangeRate> ExchangeRates => Set<ExchangeRate>();
