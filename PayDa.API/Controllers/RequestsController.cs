@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using PayDa.Application.Requests.Commands.CancelRequest;
 using PayDa.Application.Requests.Commands.CreateRequest;
 using PayDa.Application.Requests.Commands.PreviewRequest;
+using PayDa.Application.Requests.Queries.GetAdminRequests;
 using PayDa.Application.Requests.Queries.GetMyOwnRequests;
 using PayDa.Application.Requests.Queries.GetMyRequests;
 using PayDa.Application.Requests.Queries.GetRequestDetail;
@@ -20,6 +21,14 @@ public class RequestsController : ControllerBase
     private readonly ISender _sender;
 
     public RequestsController(ISender sender) => _sender = sender;
+
+    [HttpGet("admin")]
+    [Authorize(Roles = "Admin,Agent")]
+    public async Task<IActionResult> GetAdminRequests(
+        [FromQuery] RequestType type,
+        [FromQuery] Currency currency,
+        [FromQuery] decimal? amount)
+        => Ok(await _sender.Send(new GetAdminRequestsQuery(type, currency, amount)));
 
     [HttpGet("search")]
     public async Task<IActionResult> Search([FromQuery] RequestType type,
