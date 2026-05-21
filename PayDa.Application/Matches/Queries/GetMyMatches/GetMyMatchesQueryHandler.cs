@@ -39,9 +39,10 @@ public class GetMyMatchesQueryHandler : IRequestHandler<GetMyMatchesQuery, List<
                 var counterpartRequest = isSender ? m.ReceiverRequest : m.SenderRequest;
                 var counterpart = counterpartRequest.User;
 
-                var counterpartName = counterpart.FirstName != null && counterpart.LastName != null
-                    ? $"{counterpart.FirstName} {counterpart.LastName[0]}."
-                    : "Unknown";
+                var hasFullName = !string.IsNullOrEmpty(counterpart.FirstName) && !string.IsNullOrEmpty(counterpart.LastName);
+                var counterpartName = hasFullName
+                    ? $"{counterpart.FirstName} {counterpart.LastName![0]}."
+                    : counterpart.TelegramUsername ?? "Unknown";
 
                 return new MyMatchDto(
                     m.Id,
