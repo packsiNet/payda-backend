@@ -1,0 +1,19 @@
+using MediatR;
+using PayDa.Domain.Enums;
+
+namespace PayDa.Application.Requests.Queries.GetMyOwnRequests;
+
+public record GetMyOwnRequestsQuery(RequestType? Type = null) : IRequest<List<MyOwnRequestDto>>;
+
+public record MyOwnRequestDto(
+    Guid Id,
+    RequestType Type,
+    Currency Currency,
+    decimal Amount,
+    decimal RateValue,
+    decimal CommissionAmount,
+    List<string> PaymentMethods,
+    RequestStatus Status,
+    DateTime ExpiresAt,
+    DateTime CreatedAt
+);

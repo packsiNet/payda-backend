@@ -8,13 +8,19 @@ namespace PayDa.Application.Requests.Queries.GetMyRequests;
 public class GetMyRequestsQueryHandler : IRequestHandler<GetMyRequestsQuery, List<RequestSummaryDto>>
 {
     private readonly IAppDbContext _context;
+    private readonly ICurrentUserService _currentUser;
 
-    public GetMyRequestsQueryHandler(IAppDbContext context) => _context = context;
+    public GetMyRequestsQueryHandler(IAppDbContext context, ICurrentUserService currentUser)
+    {
+        _context = context;
+        _currentUser = currentUser;
+    }
 
     public async Task<List<RequestSummaryDto>> Handle(GetMyRequestsQuery request, CancellationToken ct)
     {
         var query = _context.Requests
             .Include(r => r.User).ThenInclude(u => u.Tier)
+            .Where(r => r.UserId != _currentUser.UserId)
             .AsQueryable();
 
         if (request.Type.HasValue)

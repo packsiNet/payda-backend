@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using PayDa.Application.Requests.Commands.CancelRequest;
 using PayDa.Application.Requests.Commands.CreateRequest;
 using PayDa.Application.Requests.Commands.PreviewRequest;
+using PayDa.Application.Requests.Queries.GetMyOwnRequests;
 using PayDa.Application.Requests.Queries.GetMyRequests;
 using PayDa.Application.Requests.Queries.GetRequestDetail;
 using PayDa.Application.Requests.Queries.SearchMatchingRequests;
@@ -26,8 +27,12 @@ public class RequestsController : ControllerBase
         => Ok(await _sender.Send(new SearchMatchingRequestsQuery(type, currency, amount)));
 
     [HttpGet]
-    public async Task<IActionResult> GetMyRequests([FromQuery] RequestType? type)
+    public async Task<IActionResult> GetRequests([FromQuery] RequestType? type)
         => Ok(await _sender.Send(new GetMyRequestsQuery(type)));
+
+    [HttpGet("mine")]
+    public async Task<IActionResult> GetMyOwnRequests([FromQuery] RequestType? type)
+        => Ok(await _sender.Send(new GetMyOwnRequestsQuery(type)));
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetDetail(Guid id)

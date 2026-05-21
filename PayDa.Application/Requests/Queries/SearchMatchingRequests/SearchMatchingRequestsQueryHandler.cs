@@ -9,8 +9,13 @@ public class SearchMatchingRequestsQueryHandler
     : IRequestHandler<SearchMatchingRequestsQuery, List<MatchingRequestDto>>
 {
     private readonly IAppDbContext _context;
+    private readonly ICurrentUserService _currentUser;
 
-    public SearchMatchingRequestsQueryHandler(IAppDbContext context) => _context = context;
+    public SearchMatchingRequestsQueryHandler(IAppDbContext context, ICurrentUserService currentUser)
+    {
+        _context = context;
+        _currentUser = currentUser;
+    }
 
     public async Task<List<MatchingRequestDto>> Handle(
         SearchMatchingRequestsQuery query, CancellationToken ct)
@@ -20,6 +25,7 @@ public class SearchMatchingRequestsQueryHandler
         var rows = await _context.Requests
             .Include(r => r.User).ThenInclude(u => u.Tier)
             .Where(r =>
+                r.UserId != _currentUser.UserId &&
                 r.Type == oppositeType &&
                 r.Currency == query.Currency &&
                 r.Amount == query.Amount &&
