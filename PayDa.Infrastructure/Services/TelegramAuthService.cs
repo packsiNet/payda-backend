@@ -51,6 +51,41 @@ public class TelegramAuthService : ITelegramAuthService
 
     public bool ValidateContactResponse(string contactResponse) => ValidateInitData(contactResponse);
 
+    public bool ValidateWidgetData(Dictionary<string, string> data)
+    {
+        if (!data.TryGetValue("hash", out var hash)) return false;
+
+        var dataCheckString = string.Join("\n",
+            data.Where(kv => kv.Key != "hash")
+                .OrderBy(kv => kv.Key)
+                .Select(kv => $"{kv.Key}={kv.Value}"));
+
+        // Widget uses SHA256(botToken) as secret — different from WebApp's HMAC("WebAppData", botToken)
+        using var sha = SHA256.Create();
+        var secretKey = sha.ComputeHash(Encoding.UTF8.GetBytes(_botToken));
+        using var hmac = new HMACSHA256(secretKey);
+        var computedHash = Convert.ToHexString(
+            hmac.ComputeHash(Encoding.UTF8.GetBytes(dataCheckString))).ToLower();
+
+        return computedHash == hash;
+    }
+
+    public TelegramUserData ParseWidgetData(Dictionary<string, string> data)
+    {
+        data.TryGetValue("id", out var idStr);
+        data.TryGetValue("username", out var username);
+        data.TryGetValue("first_name", out var firstName);
+        data.TryGetValue("last_name", out var lastName);
+        data.TryGetValue("photo_url", out var photoUrl);
+
+        return new TelegramUserData(
+            long.Parse(idStr!),
+            username,
+            firstName,
+            lastName,
+            photoUrl);
+    }
+
     public TelegramContactData ParseContactResponse(string contactResponse)
     {
         var parsed = HttpUtility.ParseQueryString(contactResponse);
