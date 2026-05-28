@@ -15,5 +15,7 @@ public record UserSummaryDto(
     UserRole Role,
     bool IsTrusted,
     string TierName,
-    DateTime CreatedAt
+    DateTime CreatedAt,
+    string? SelfieImageUrl,
+    string? DocumentImageUrl
 );

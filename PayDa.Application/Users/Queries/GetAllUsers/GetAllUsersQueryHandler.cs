@@ -20,7 +20,8 @@ public class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, List<Us
             .Select(u => new UserSummaryDto(
                 u.Id, u.TelegramId, u.TelegramUsername,
                 u.FirstName, u.LastName, u.KycStatus,
-                u.Role, u.IsTrusted, u.Tier.Name, u.CreatedAt))
+                u.Role, u.IsTrusted, u.Tier.Name, u.CreatedAt,
+                u.SelfieImageUrl, u.DocumentImageUrl))
             .ToListAsync(ct);
     }
 }

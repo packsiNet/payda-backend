@@ -10,6 +10,7 @@ using PayDa.Application.Users.Commands.VerifyPhone;
 using PayDa.Application.Users.Queries.GetAllUsers;
 using PayDa.Application.Users.Queries.GetKycStatus;
 using PayDa.Application.Users.Queries.GetMyProfile;
+using PayDa.Application.Users.Queries.GetPendingKycUsers;
 using PayDa.Domain.Enums;
 
 namespace PayDa.API.Controllers;
@@ -52,6 +53,11 @@ public class UsersController : ControllerBase
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> GetAllUsers([FromQuery] int page = 1, [FromQuery] int pageSize = 20)
         => Ok(await _sender.Send(new GetAllUsersQuery(page, pageSize)));
+
+    [HttpGet("pending-kyc")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> GetPendingKycUsers([FromQuery] int page = 1, [FromQuery] int pageSize = 20)
+        => Ok(await _sender.Send(new GetPendingKycUsersQuery(page, pageSize)));
 
     [HttpPost("{id}/approve-kyc")]
     [Authorize(Roles = "Admin")]
