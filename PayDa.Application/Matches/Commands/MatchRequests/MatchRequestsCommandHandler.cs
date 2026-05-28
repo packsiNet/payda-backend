@@ -23,7 +23,7 @@ public class MatchRequestsCommandHandler : IRequestHandler<MatchRequestsCommand,
             .FirstOrDefaultAsync(r => r.Id == cmd.ReceiverRequestId && r.Status == RequestStatus.Pending, ct)
             ?? throw new NotFoundException("Receiver request not found or not pending");
 
-        var match = Match.Create(cmd.SenderRequestId, cmd.ReceiverRequestId, cmd.IsAgentInvolved);
+        var match = Match.Create(cmd.SenderRequestId, cmd.ReceiverRequestId, cmd.Price, cmd.IsAgentInvolved);
         _context.Matches.Add(match);
 
         senderRequest.SetMatched(match.Id);

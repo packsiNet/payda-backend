@@ -17,7 +17,7 @@ public record MatchingRequestDto(
     string UserLevelTitle,
     bool IsTrusted,
     decimal Amount,
-    decimal RateValue,
+    PricePreference PricePreference,
     List<string> PaymentMethods,
     DateTime CreatedAt
 );

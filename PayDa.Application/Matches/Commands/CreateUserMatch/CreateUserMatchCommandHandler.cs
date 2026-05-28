@@ -49,7 +49,7 @@ public class CreateUserMatchCommandHandler : IRequestHandler<CreateUserMatchComm
         var senderRequestId = myRequest.Type == RequestType.Send ? myRequest.Id : otherRequest.Id;
         var receiverRequestId = myRequest.Type == RequestType.Receive ? myRequest.Id : otherRequest.Id;
 
-        var match = Match.Create(senderRequestId, receiverRequestId, isAgentInvolved: false);
+        var match = Match.Create(senderRequestId, receiverRequestId, price: 0, isAgentInvolved: false);
         _context.Matches.Add(match);
 
         myRequest.SetMatched(match.Id);
@@ -75,9 +75,7 @@ public class CreateUserMatchCommandHandler : IRequestHandler<CreateUserMatchComm
             type: RequestType.Receive,
             currency: otherRequest.Currency,
             amount: otherRequest.Amount,
-            rateType: otherRequest.RateType,
-            rateValue: otherRequest.RateValue,
-            commissionPercent: 1m,
+            pricePreference: otherRequest.PricePreference,
             paymentMethods: otherRequest.PaymentMethods,
             receiverId: null,
             expiresAt: DateTime.UtcNow.AddHours(24)
@@ -131,9 +129,7 @@ public class CreateUserMatchCommandHandler : IRequestHandler<CreateUserMatchComm
             type: RequestType.Send,
             currency: otherRequest.Currency,
             amount: otherRequest.Amount,
-            rateType: otherRequest.RateType,
-            rateValue: otherRequest.RateValue,
-            commissionPercent: 1m,
+            pricePreference: otherRequest.PricePreference,
             paymentMethods: otherRequest.PaymentMethods,
             receiverId: receiver.Id,
             expiresAt: DateTime.UtcNow.AddHours(24)

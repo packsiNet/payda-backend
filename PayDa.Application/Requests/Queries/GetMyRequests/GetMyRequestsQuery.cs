@@ -10,7 +10,7 @@ public record RequestSummaryDto(
     RequestType Type,
     Currency Currency,
     decimal Amount,
-    decimal RateValue,
+    PricePreference PricePreference,
     List<string> PaymentMethods,
     RequestStatus Status,
     DateTime ExpiresAt,

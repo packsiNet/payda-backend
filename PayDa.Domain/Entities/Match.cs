@@ -11,6 +11,8 @@ public class Match : BaseEntity
     public Guid ReceiverRequestId { get; private set; }
     public Request ReceiverRequest { get; private set; } = default!;
 
+    public decimal Price { get; private set; }
+
     public bool IsAgentInvolved { get; private set; }
     public MatchStatus Status { get; private set; } = MatchStatus.Active;
 
@@ -19,10 +21,11 @@ public class Match : BaseEntity
     private Match() { }
 
     public static Match Create(Guid senderRequestId, Guid receiverRequestId,
-        bool isAgentInvolved = false) => new()
+        decimal price = 0, bool isAgentInvolved = false) => new()
     {
         SenderRequestId = senderRequestId,
         ReceiverRequestId = receiverRequestId,
+        Price = price,
         IsAgentInvolved = isAgentInvolved,
         Status = MatchStatus.Active
     };

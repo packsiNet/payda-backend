@@ -36,7 +36,7 @@ public class GetAdminRequestsQueryHandler : IRequestHandler<GetAdminRequestsQuer
                 r.Type,
                 r.Currency,
                 r.Amount,
-                r.RateValue,
+                r.PricePreference,
                 [.. r.PaymentMethods.Select(p => p.ToString())],
                 r.ExpiresAt,
                 r.CreatedAt,

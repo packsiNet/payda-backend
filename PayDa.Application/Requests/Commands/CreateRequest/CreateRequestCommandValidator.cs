@@ -10,10 +10,6 @@ public class CreateRequestCommandValidator : AbstractValidator<CreateRequestComm
         RuleFor(x => x.Amount).GreaterThan(0);
         RuleFor(x => x.PaymentMethods).NotEmpty();
 
-        RuleFor(x => x.CustomRate)
-            .GreaterThan(0)
-            .When(x => x.RateType == RateType.Custom);
-
         // Send: receiverId required
         RuleFor(x => x.ReceiverId)
             .NotEmpty()

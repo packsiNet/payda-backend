@@ -64,7 +64,7 @@ public class GetMyTransactionsQueryHandler : IRequestHandler<GetMyTransactionsQu
                 isSender ? RequestType.Send : RequestType.Receive,
                 myRequest.Currency,
                 myRequest.Amount,
-                myRequest.RateValue,
+                t.Match.Price,
                 myRequest.PaymentMethods.FirstOrDefault().ToString(),
                 counterpartName,
                 counterpart.Tier.Order,

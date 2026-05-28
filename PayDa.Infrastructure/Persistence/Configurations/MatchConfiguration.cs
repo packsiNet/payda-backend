@@ -10,6 +10,8 @@ public class MatchConfiguration : IEntityTypeConfiguration<Match>
     {
         builder.HasKey(m => m.Id);
 
+        builder.Property(m => m.Price).HasColumnType("decimal(18,2)");
+
         builder.HasOne(m => m.SenderRequest)
             .WithMany()
             .HasForeignKey(m => m.SenderRequestId)

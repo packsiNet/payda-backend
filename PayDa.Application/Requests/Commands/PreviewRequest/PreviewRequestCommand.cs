@@ -7,14 +7,11 @@ public record PreviewRequestCommand(
     RequestType Type,
     Currency Currency,
     decimal Amount,
-    RateType RateType,
-    decimal? CustomRate
+    PricePreference PricePreference
 ) : IRequest<PreviewRequestResult>;
 
 public record PreviewRequestResult(
     decimal Amount,
-    decimal RateValue,
-    decimal CommissionPercent,
-    decimal CommissionAmount,
-    decimal TotalAmount
+    Currency Currency,
+    PricePreference PricePreference
 );

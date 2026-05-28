@@ -45,7 +45,7 @@ public class SearchMatchingRequestsQueryHandler
                 r.User.Tier.Name,
                 r.User.IsTrusted,
                 r.Amount,
-                r.RateValue,
+                r.PricePreference,
                 r.PaymentMethods.Select(p => p.ToString()).ToList(),
                 r.CreatedAt
             );

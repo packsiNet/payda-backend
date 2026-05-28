@@ -13,9 +13,6 @@ public class RequestConfiguration : IEntityTypeConfiguration<Request>
         builder.HasKey(r => r.Id);
 
         builder.Property(r => r.Amount).HasColumnType("decimal(18,2)");
-        builder.Property(r => r.RateValue).HasColumnType("decimal(18,2)");
-        builder.Property(r => r.CommissionPercent).HasColumnType("decimal(5,2)");
-        builder.Property(r => r.CommissionAmount).HasColumnType("decimal(18,2)");
 
         builder.Property(r => r.PaymentMethods)
             .HasConversion(

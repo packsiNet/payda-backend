@@ -12,11 +12,7 @@ public class Request : BaseEntity
     public Currency Currency { get; private set; }
     public decimal Amount { get; private set; }
 
-    public RateType RateType { get; private set; }
-    public decimal RateValue { get; private set; }
-
-    public decimal CommissionPercent { get; private set; }
-    public decimal CommissionAmount { get; private set; }
+    public PricePreference PricePreference { get; private set; }
 
     public List<PaymentMethod> PaymentMethods { get; private set; } = new();
 
@@ -34,17 +30,14 @@ public class Request : BaseEntity
     private Request() { }
 
     public static Request Create(Guid userId, RequestType type, Currency currency,
-        decimal amount, RateType rateType, decimal rateValue, decimal commissionPercent,
+        decimal amount, PricePreference pricePreference,
         List<PaymentMethod> paymentMethods, Guid? receiverId, DateTime expiresAt) => new()
     {
         UserId = userId,
         Type = type,
         Currency = currency,
         Amount = amount,
-        RateType = rateType,
-        RateValue = rateValue,
-        CommissionPercent = commissionPercent,
-        CommissionAmount = amount * (commissionPercent / 100),
+        PricePreference = pricePreference,
         PaymentMethods = paymentMethods,
         ReceiverId = receiverId,
         ExpiresAt = expiresAt,

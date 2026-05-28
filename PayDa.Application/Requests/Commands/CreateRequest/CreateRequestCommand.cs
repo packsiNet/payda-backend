@@ -7,8 +7,7 @@ public record CreateRequestCommand(
     RequestType Type,
     Currency Currency,
     decimal Amount,
-    RateType RateType,
-    decimal? CustomRate,
+    PricePreference PricePreference,
     List<PaymentMethod> PaymentMethods,
     // Send only
     Guid? ReceiverId,

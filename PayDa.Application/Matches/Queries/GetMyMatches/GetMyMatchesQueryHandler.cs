@@ -1,6 +1,5 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using PayDa.Application.Common.Exceptions;
 using PayDa.Application.Common.Interfaces;
 
 namespace PayDa.Application.Matches.Queries.GetMyMatches;
@@ -50,7 +49,8 @@ public class GetMyMatchesQueryHandler : IRequestHandler<GetMyMatchesQuery, List<
                     myRequest.Type,
                     myRequest.Currency,
                     myRequest.Amount,
-                    myRequest.RateValue,
+                    myRequest.PricePreference,
+                    m.Price,
                     myRequest.ExpiresAt,
                     myRequest.CreatedAt,
                     m.CreatedAt,

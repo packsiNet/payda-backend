@@ -14,7 +14,7 @@ public record AdminRequestDto(
     RequestType Type,
     Currency Currency,
     decimal Amount,
-    decimal RateValue,
+    PricePreference PricePreference,
     List<string> PaymentMethods,
     DateTime ExpiresAt,
     DateTime CreatedAt,

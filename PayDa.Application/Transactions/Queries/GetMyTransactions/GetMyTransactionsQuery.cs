@@ -18,7 +18,7 @@ public record MyTransactionDto(
     RequestType MyRole,
     Currency Currency,
     decimal Amount,
-    decimal RateValue,
+    decimal MatchPrice,
     string? PaymentMethod,
     string CounterpartDisplayName,
     int CounterpartLevel,

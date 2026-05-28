@@ -45,28 +45,12 @@ public class CreateRequestCommandHandler : IRequestHandler<CreateRequestCommand,
                 throw new NotFoundException("Receiver not found");
         }
 
-        var exchangeRate = await _context.ExchangeRates
-            .FirstOrDefaultAsync(r => r.Currency == cmd.Currency, ct)
-            ?? throw new NotFoundException("Exchange rate not found");
-
-        var rateValue = cmd.RateType switch
-        {
-            RateType.Market => exchangeRate.MarketRate,
-            RateType.Instant => exchangeRate.InstantRate,
-            RateType.Custom => cmd.CustomRate!.Value,
-            _ => throw new ArgumentOutOfRangeException()
-        };
-
-        const decimal commissionPercent = 1m;
-
         var request = Request.Create(
             userId: user.Id,
             type: cmd.Type,
             currency: cmd.Currency,
             amount: cmd.Amount,
-            rateType: cmd.RateType,
-            rateValue: rateValue,
-            commissionPercent: commissionPercent,
+            pricePreference: cmd.PricePreference,
             paymentMethods: cmd.PaymentMethods,
             receiverId: cmd.Type == RequestType.Send ? cmd.ReceiverId : null,
             expiresAt: DateTime.UtcNow.AddHours(24)

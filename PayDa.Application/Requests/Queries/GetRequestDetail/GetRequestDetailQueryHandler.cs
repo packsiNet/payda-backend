@@ -24,8 +24,7 @@ public class GetRequestDetailQueryHandler : IRequestHandler<GetRequestDetailQuer
             ?? throw new NotFoundException("Request not found");
 
         return new RequestDetailDto(
-            r.Id, r.Type, r.Currency, r.Amount, r.RateType, r.RateValue,
-            r.CommissionPercent, r.CommissionAmount,
+            r.Id, r.Type, r.Currency, r.Amount, r.PricePreference,
             r.PaymentMethods.Select(p => p.ToString()).ToList(),
             r.Status, r.ExpiresAt, r.CreatedAt,
             r.ReceiverId,
