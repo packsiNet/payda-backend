@@ -1,3 +1,3 @@
 namespace PayDa.Domain.Enums;
 
-public enum MatchStatus { Active, Completed, Cancelled }
+public enum MatchStatus { Active, Completed, Cancelled, PendingConfirmation }

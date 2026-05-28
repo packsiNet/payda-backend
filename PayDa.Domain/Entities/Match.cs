@@ -16,6 +16,11 @@ public class Match : BaseEntity
     public bool IsAgentInvolved { get; private set; }
     public MatchStatus Status { get; private set; } = MatchStatus.Active;
 
+    public DateTime? PriceSetAt { get; private set; }
+    public DateTime? ConfirmationDeadline { get; private set; }
+    public bool SenderConfirmed { get; private set; }
+    public bool ReceiverConfirmed { get; private set; }
+
     public Transaction? Transaction { get; private set; }
 
     private Match() { }
@@ -29,6 +34,44 @@ public class Match : BaseEntity
         IsAgentInvolved = isAgentInvolved,
         Status = MatchStatus.Active
     };
+
+    public static Match CreatePending(Guid senderRequestId, Guid receiverRequestId,
+        decimal price, bool isAgentInvolved, DateTime confirmationDeadline) => new()
+    {
+        SenderRequestId = senderRequestId,
+        ReceiverRequestId = receiverRequestId,
+        Price = price,
+        IsAgentInvolved = isAgentInvolved,
+        Status = MatchStatus.PendingConfirmation,
+        PriceSetAt = DateTime.UtcNow,
+        ConfirmationDeadline = confirmationDeadline,
+        SenderConfirmed = false,
+        ReceiverConfirmed = false
+    };
+
+    public bool ConfirmBySender()
+    {
+        SenderConfirmed = true;
+        UpdatedAt = DateTime.UtcNow;
+        if (!ReceiverConfirmed) return false;
+        Status = MatchStatus.Active;
+        return true;
+    }
+
+    public bool ConfirmByReceiver()
+    {
+        ReceiverConfirmed = true;
+        UpdatedAt = DateTime.UtcNow;
+        if (!SenderConfirmed) return false;
+        Status = MatchStatus.Active;
+        return true;
+    }
+
+    public void Reject()
+    {
+        Status = MatchStatus.Cancelled;
+        UpdatedAt = DateTime.UtcNow;
+    }
 
     public void Complete() { Status = MatchStatus.Completed; UpdatedAt = DateTime.UtcNow; }
     public void Cancel() { Status = MatchStatus.Cancelled; UpdatedAt = DateTime.UtcNow; }

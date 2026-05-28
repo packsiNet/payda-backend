@@ -23,14 +23,19 @@ public class MatchRequestsCommandHandler : IRequestHandler<MatchRequestsCommand,
             .FirstOrDefaultAsync(r => r.Id == cmd.ReceiverRequestId && r.Status == RequestStatus.Pending, ct)
             ?? throw new NotFoundException("Receiver request not found or not pending");
 
-        var match = Match.Create(cmd.SenderRequestId, cmd.ReceiverRequestId, cmd.Price, cmd.IsAgentInvolved);
+        var config = await _context.SystemConfigs.FirstOrDefaultAsync(ct)
+            ?? throw new NotFoundException("System config not found");
+
+        var confirmationDeadline = DateTime.UtcNow.AddHours(config.MatchConfirmationHours);
+
+        var match = Match.CreatePending(
+            cmd.SenderRequestId, cmd.ReceiverRequestId,
+            cmd.Price, cmd.IsAgentInvolved, confirmationDeadline);
+
         _context.Matches.Add(match);
 
         senderRequest.SetMatched(match.Id);
         receiverRequest.SetMatched(match.Id);
-
-        var transaction = Transaction.Create(match.Id);
-        _context.Transactions.Add(transaction);
 
         await _context.SaveChangesAsync(ct);
         return match.Id;

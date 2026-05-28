@@ -17,6 +17,7 @@ public class AppDbContext : DbContext, IAppDbContext
     public DbSet<Match> Matches => Set<Match>();
     public DbSet<Transaction> Transactions => Set<Transaction>();
     public DbSet<ExchangeRate> ExchangeRates => Set<ExchangeRate>();
+    public DbSet<SystemConfig> SystemConfigs => Set<SystemConfig>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -39,6 +40,10 @@ public class AppDbContext : DbContext, IAppDbContext
             new { Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), Currency = Currency.EUR, MarketRate = 65000m, InstantRate = 64000m, UpdatedByUserId = adminUserId, CreatedAt = seedDate, UpdatedAt = (DateTime?)null },
             new { Id = new Guid("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"), Currency = Currency.USD, MarketRate = 60000m, InstantRate = 59000m, UpdatedByUserId = adminUserId, CreatedAt = seedDate, UpdatedAt = (DateTime?)null },
             new { Id = new Guid("cccccccc-cccc-cccc-cccc-cccccccccccc"), Currency = Currency.CAD, MarketRate = 44000m, InstantRate = 43000m, UpdatedByUserId = adminUserId, CreatedAt = seedDate, UpdatedAt = (DateTime?)null }
+        );
+
+        builder.Entity<SystemConfig>().HasData(
+            new { Id = new Guid("dddddddd-dddd-dddd-dddd-dddddddddddd"), MatchConfirmationHours = 24, CreatedAt = seedDate, UpdatedAt = (DateTime?)null }
         );
     }
 }

@@ -13,5 +13,6 @@ public interface IAppDbContext
     DbSet<Match> Matches { get; }
     DbSet<Transaction> Transactions { get; }
     DbSet<ExchangeRate> ExchangeRates { get; }
+    DbSet<SystemConfig> SystemConfigs { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
