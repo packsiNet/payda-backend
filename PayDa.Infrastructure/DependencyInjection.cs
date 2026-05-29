@@ -18,6 +18,7 @@ public static class DependencyInjection
         services.AddScoped<ITelegramAuthService, TelegramAuthService>();
         services.AddScoped<IStorageService, LocalStorageService>();
         services.AddScoped<IJwtService, JwtService>();
+        services.AddScoped<ITelegramBotService, TelegramBotService>();
 
         return services;
     }
