@@ -10,10 +10,23 @@ public class CreateRequestCommandValidator : AbstractValidator<CreateRequestComm
         RuleFor(x => x.Amount).GreaterThan(0);
         RuleFor(x => x.PaymentMethods).NotEmpty();
 
-        // Send: receiverId required
+        // Send: either ReceiverId or NewReceiver required
         RuleFor(x => x.ReceiverId)
             .NotEmpty()
-            .When(x => x.Type == RequestType.Send);
+            .When(x => x.Type == RequestType.Send && x.NewReceiver is null);
+
+        RuleFor(x => x.NewReceiver)
+            .NotNull()
+            .When(x => x.Type == RequestType.Send && x.ReceiverId is null)
+            .ChildRules(nr =>
+            {
+                nr.RuleFor(r => r.FirstName).NotEmpty().MaximumLength(100);
+                nr.RuleFor(r => r.LastName).NotEmpty().MaximumLength(100);
+                nr.RuleFor(r => r.NationalId).NotEmpty().Length(10);
+                nr.RuleFor(r => r.MobileNumber).NotEmpty();
+                nr.RuleFor(r => r.IBAN).NotEmpty().MaximumLength(34);
+            })
+            .When(x => x.Type == RequestType.Send && x.NewReceiver is not null);
 
         // Receive: at least one foreign account required
         RuleFor(x => x.ForeignAccounts)
