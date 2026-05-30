@@ -18,16 +18,17 @@ public class GetMyOwnRequestsQueryHandler : IRequestHandler<GetMyOwnRequestsQuer
 
     public async Task<List<MyOwnRequestDto>> Handle(GetMyOwnRequestsQuery request, CancellationToken ct)
     {
+        var completedMatchIds = _context.Transactions
+            .Where(t => t.Status == TransactionStatus.Completed)
+            .Select(t => t.MatchId);
+
         var query = _context.Requests
-            .Include(r => r.Match)
-                .ThenInclude(m => m!.Transaction)
             .Where(r => r.UserId == _currentUser.UserId)
             .Where(r => r.Status != RequestStatus.Cancelled)
             .Where(r => r.Status != RequestStatus.Expired)
             .Where(r => !(r.Status == RequestStatus.Matched &&
-                          r.Match != null &&
-                          r.Match.Transaction != null &&
-                          r.Match.Transaction.Status == TransactionStatus.Completed))
+                          r.MatchId.HasValue &&
+                          completedMatchIds.Contains(r.MatchId.Value)))
             .AsQueryable();
 
         if (request.Type.HasValue)
