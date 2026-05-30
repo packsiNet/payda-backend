@@ -66,7 +66,10 @@ public class CreateRequestCommandHandler : IRequestHandler<CreateRequestCommand,
             }
             else
             {
-                throw new ValidationException("Send request requires either ReceiverId or NewReceiver.");
+                throw new ValidationException(new Dictionary<string, string[]>
+                {
+                    { "ReceiverId", ["Either ReceiverId or NewReceiver is required for Send requests."] }
+                });
             }
         }
 
