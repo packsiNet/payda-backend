@@ -9,11 +9,20 @@ public record CreateRequestCommand(
     decimal Amount,
     PricePreference PricePreference,
     List<PaymentMethod> PaymentMethods,
-    // Send only
+    // Send only — either ReceiverId (existing) or NewReceiver (inline create)
     Guid? ReceiverId,
+    NewReceiverDto? NewReceiver,
     // Receive only
     List<ForeignAccountDto>? ForeignAccounts
 ) : IRequest<Guid>;
+
+public record NewReceiverDto(
+    string FirstName,
+    string LastName,
+    string NationalId,
+    string MobileNumber,
+    string IBAN
+);
 
 public record ForeignAccountDto(
     PaymentMethod Method,

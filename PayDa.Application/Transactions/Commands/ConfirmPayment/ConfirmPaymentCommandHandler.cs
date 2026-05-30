@@ -6,32 +6,25 @@ using PayDa.Domain.Enums;
 
 namespace PayDa.Application.Transactions.Commands.ConfirmPayment;
 
-public class ConfirmPaymentCommandHandler : IRequestHandler<ConfirmPaymentCommand>
+public class ConfirmTomanPaymentCommandHandler : IRequestHandler<ConfirmTomanPaymentCommand>
 {
     private readonly IAppDbContext _context;
-    private readonly ICurrentUserService _currentUser;
 
-    public ConfirmPaymentCommandHandler(IAppDbContext context, ICurrentUserService currentUser)
+    public ConfirmTomanPaymentCommandHandler(IAppDbContext context)
     {
         _context = context;
-        _currentUser = currentUser;
     }
 
-    public async Task Handle(ConfirmPaymentCommand cmd, CancellationToken ct)
+    public async Task Handle(ConfirmTomanPaymentCommand cmd, CancellationToken ct)
     {
         var transaction = await _context.Transactions
-            .Include(t => t.Match)
-                .ThenInclude(m => m.ReceiverRequest)
             .FirstOrDefaultAsync(t => t.Id == cmd.TransactionId, ct)
             ?? throw new NotFoundException("Transaction not found");
 
-        if (transaction.Status != TransactionStatus.ScreenshotUploaded)
-            throw new ForbiddenException("Transaction is not in ScreenshotUploaded state");
+        if (transaction.Status != TransactionStatus.TomanPaymentDeclared)
+            throw new BadRequestException("Transaction is not in TomanPaymentDeclared state");
 
-        if (transaction.Match.ReceiverRequest.UserId != _currentUser.UserId)
-            throw new ForbiddenException("Only the receiver can confirm the payment");
-
-        transaction.Confirm();
+        transaction.ConfirmTomanPayment();
         await _context.SaveChangesAsync(ct);
     }
 }

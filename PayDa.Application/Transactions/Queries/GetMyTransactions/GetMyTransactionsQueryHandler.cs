@@ -70,9 +70,9 @@ public class GetMyTransactionsQueryHandler : IRequestHandler<GetMyTransactionsQu
                 counterpart.Tier.Order,
                 counterpart.Tier.Name,
                 counterpart.IsTrusted,
-                t.ScreenshotUrl,
-                t.PaidAt,
-                t.SettledAt,
+                t.ForeignReceiptUrl,
+                t.TomanDeclaredAt,
+                t.CompletedAt,
                 t.CreatedAt
             );
         }).ToList();

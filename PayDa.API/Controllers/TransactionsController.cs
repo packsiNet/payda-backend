@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PayDa.Application.Transactions.Commands.ConfirmForeignReceipt;
 using PayDa.Application.Transactions.Commands.ConfirmPayment;
 using PayDa.Application.Transactions.Commands.SettleTransaction;
 using PayDa.Application.Transactions.Commands.UploadScreenshot;
@@ -31,24 +32,36 @@ public class TransactionsController : ControllerBase
     public async Task<IActionResult> GetDetail(Guid id)
         => Ok(await _sender.Send(new GetTransactionDetailQuery(id)));
 
-    [HttpPost("{id}/screenshot")]
-    public async Task<IActionResult> UploadScreenshot(Guid id, IFormFile file)
+    /// <summary>Receiver declares they have paid toman (no receipt needed)</summary>
+    [HttpPost("{id}/declare-toman-payment")]
+    public async Task<IActionResult> DeclareTomanPayment(Guid id)
     {
-        await _sender.Send(new UploadScreenshotCommand(id, file.OpenReadStream(), file.FileName));
+        await _sender.Send(new DeclareTomanPaymentCommand(id));
         return NoContent();
     }
 
-    [HttpPost("{id}/confirm")]
-    public async Task<IActionResult> Confirm(Guid id)
+    /// <summary>Admin confirms toman payment received</summary>
+    [HttpPost("{id}/confirm-toman")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> ConfirmTomanPayment(Guid id)
     {
-        await _sender.Send(new ConfirmPaymentCommand(id));
+        await _sender.Send(new ConfirmTomanPaymentCommand(id));
         return NoContent();
     }
 
-    [HttpPost("{id}/settle")]
-    public async Task<IActionResult> Settle(Guid id)
+    /// <summary>Sender uploads foreign transfer receipt (after toman confirmed)</summary>
+    [HttpPost("{id}/foreign-receipt")]
+    public async Task<IActionResult> UploadForeignReceipt(Guid id, IFormFile file)
     {
-        await _sender.Send(new SettleTransactionCommand(id));
+        await _sender.Send(new UploadForeignReceiptCommand(id, file.OpenReadStream(), file.FileName));
+        return NoContent();
+    }
+
+    /// <summary>Receiver confirms foreign currency received — completes transaction</summary>
+    [HttpPost("{id}/confirm-foreign")]
+    public async Task<IActionResult> ConfirmForeignReceipt(Guid id)
+    {
+        await _sender.Send(new ConfirmForeignReceiptCommand(id));
         return NoContent();
     }
 }

@@ -11,6 +11,6 @@ public class TransactionConfiguration : IEntityTypeConfiguration<Transaction>
         builder.HasKey(t => t.Id);
         builder.Property(t => t.ReferenceCode).HasMaxLength(20);
         builder.HasIndex(t => t.ReferenceCode).IsUnique();
-        builder.Property(t => t.ScreenshotUrl).HasMaxLength(500);
+        builder.Property(t => t.ForeignReceiptUrl).HasMaxLength(500);
     }
 }

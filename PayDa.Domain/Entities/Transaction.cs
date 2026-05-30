@@ -9,18 +9,22 @@ public class Transaction : BaseEntity
     public Match Match { get; private set; } = default!;
 
     public string? ReferenceCode { get; private set; }
-    public string? ScreenshotUrl { get; private set; }
-    public TransactionStatus Status { get; private set; } = TransactionStatus.Pending;
 
-    public DateTime? PaidAt { get; private set; }
-    public DateTime? ConfirmedAt { get; private set; }
-    public DateTime? SettledAt { get; private set; }
+    public string? ForeignReceiptUrl { get; private set; }
+
+    public TransactionStatus Status { get; private set; } = TransactionStatus.WaitingForTomanPayment;
+
+    public DateTime? TomanDeclaredAt { get; private set; }
+    public DateTime? TomanConfirmedAt { get; private set; }
+    public DateTime? ForeignTransferredAt { get; private set; }
+    public DateTime? CompletedAt { get; private set; }
 
     private Transaction() { }
 
     public static Transaction Create(Guid matchId) => new()
     {
         MatchId = matchId,
+        Status = TransactionStatus.WaitingForTomanPayment,
         ReferenceCode = GenerateReferenceCode()
     };
 
@@ -33,25 +37,32 @@ public class Transaction : BaseEntity
         return $"TX-{part1}-{part2}";
     }
 
-    public void UploadScreenshot(string url)
+    public void DeclareTomanPayment()
     {
-        ScreenshotUrl = url;
-        Status = TransactionStatus.ScreenshotUploaded;
-        PaidAt = DateTime.UtcNow;
+        Status = TransactionStatus.TomanPaymentDeclared;
+        TomanDeclaredAt = DateTime.UtcNow;
         UpdatedAt = DateTime.UtcNow;
     }
 
-    public void Confirm()
+    public void ConfirmTomanPayment()
     {
-        Status = TransactionStatus.Confirmed;
-        ConfirmedAt = DateTime.UtcNow;
+        Status = TransactionStatus.TomanConfirmed;
+        TomanConfirmedAt = DateTime.UtcNow;
         UpdatedAt = DateTime.UtcNow;
     }
 
-    public void Settle()
+    public void UploadForeignReceipt(string url)
     {
-        Status = TransactionStatus.Settled;
-        SettledAt = DateTime.UtcNow;
+        ForeignReceiptUrl = url;
+        Status = TransactionStatus.ForeignReceiptUploaded;
+        ForeignTransferredAt = DateTime.UtcNow;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    public void Complete()
+    {
+        Status = TransactionStatus.Completed;
+        CompletedAt = DateTime.UtcNow;
         UpdatedAt = DateTime.UtcNow;
     }
 

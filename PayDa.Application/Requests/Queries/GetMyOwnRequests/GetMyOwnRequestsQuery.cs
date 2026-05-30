@@ -13,6 +13,7 @@ public record MyOwnRequestDto(
     PricePreference PricePreference,
     List<string> PaymentMethods,
     RequestStatus Status,
+    Guid? MatchId,
     DateTime ExpiresAt,
     DateTime CreatedAt
 );

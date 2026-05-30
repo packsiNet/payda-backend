@@ -37,12 +37,37 @@ public class CreateRequestCommandHandler : IRequestHandler<CreateRequestCommand,
         if (cmd.Amount > user.Tier.MaxAmountPerRequest)
             throw new ForbiddenException($"Amount exceeds tier limit of {user.Tier.MaxAmountPerRequest}");
 
+        Guid? receiverId = null;
+
         if (cmd.Type == RequestType.Send)
         {
-            var receiverExists = await _context.Receivers
-                .AnyAsync(r => r.Id == cmd.ReceiverId!.Value && r.UserId == user.Id, ct);
-            if (!receiverExists)
-                throw new NotFoundException("Receiver not found");
+            if (cmd.ReceiverId.HasValue)
+            {
+                var receiverExists = await _context.Receivers
+                    .AnyAsync(r => r.Id == cmd.ReceiverId.Value && r.UserId == user.Id, ct);
+                if (!receiverExists)
+                    throw new NotFoundException("Receiver not found");
+
+                receiverId = cmd.ReceiverId.Value;
+            }
+            else if (cmd.NewReceiver is not null)
+            {
+                var receiver = Receiver.Create(
+                    user.Id,
+                    cmd.NewReceiver.FirstName,
+                    cmd.NewReceiver.LastName,
+                    cmd.NewReceiver.NationalId,
+                    cmd.NewReceiver.MobileNumber,
+                    cmd.NewReceiver.IBAN
+                );
+                _context.Receivers.Add(receiver);
+                await _context.SaveChangesAsync(ct);
+                receiverId = receiver.Id;
+            }
+            else
+            {
+                throw new ValidationException("Send request requires either ReceiverId or NewReceiver.");
+            }
         }
 
         var request = Request.Create(
@@ -52,7 +77,7 @@ public class CreateRequestCommandHandler : IRequestHandler<CreateRequestCommand,
             amount: cmd.Amount,
             pricePreference: cmd.PricePreference,
             paymentMethods: cmd.PaymentMethods,
-            receiverId: cmd.Type == RequestType.Send ? cmd.ReceiverId : null,
+            receiverId: receiverId,
             expiresAt: DateTime.UtcNow.AddHours(24)
         );
 

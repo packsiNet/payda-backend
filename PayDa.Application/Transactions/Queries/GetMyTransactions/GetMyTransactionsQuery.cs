@@ -24,8 +24,8 @@ public record MyTransactionDto(
     int CounterpartLevel,
     string CounterpartLevelTitle,
     bool CounterpartIsTrusted,
-    string? ScreenshotUrl,
-    DateTime? PaidAt,
-    DateTime? SettledAt,
+    string? ForeignReceiptUrl,
+    DateTime? TomanDeclaredAt,
+    DateTime? CompletedAt,
     DateTime CreatedAt
 );
