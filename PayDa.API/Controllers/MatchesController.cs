@@ -6,6 +6,7 @@ using PayDa.Application.Matches.Commands.CreateUserMatch;
 using PayDa.Application.Matches.Commands.MatchRequests;
 using PayDa.Application.Matches.Commands.RejectMatch;
 using PayDa.Application.Matches.Queries.GetMyMatches;
+using PayDa.Application.Matches.Queries.GetAdminPendingMatches;
 using PayDa.Application.Matches.Queries.GetPendingConfirmationMatches;
 
 namespace PayDa.API.Controllers;
@@ -47,6 +48,11 @@ public class MatchesController : ControllerBase
         var result = await _sender.Send(cmd);
         return Ok(new { matchId = result.MatchId, message = result.Message });
     }
+
+    [HttpGet("admin/pending-confirmation")]
+    [Authorize(Roles = "Admin,Agent")]
+    public async Task<IActionResult> GetAdminPendingMatches()
+        => Ok(await _sender.Send(new GetAdminPendingMatchesQuery()));
 
     [HttpPost("admin")]
     [Authorize(Roles = "Admin,Agent")]
