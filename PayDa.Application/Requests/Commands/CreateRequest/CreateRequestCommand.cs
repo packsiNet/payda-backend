@@ -13,7 +13,8 @@ public record CreateRequestCommand(
     Guid? ReceiverId,
     NewReceiverDto? NewReceiver,
     // Receive only
-    List<ForeignAccountDto>? ForeignAccounts
+    List<ForeignAccountDto>? ForeignAccounts,
+    TomanPayerDto? TomanPayer
 ) : IRequest<Guid>;
 
 public record NewReceiverDto(
@@ -22,6 +23,11 @@ public record NewReceiverDto(
     string NationalId,
     string MobileNumber,
     string IBAN
+);
+
+public record TomanPayerDto(
+    string FullName,
+    string MobileNumber
 );
 
 public record ForeignAccountDto(

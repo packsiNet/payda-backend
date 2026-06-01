@@ -23,6 +23,13 @@ public class GetRequestDetailQueryHandler : IRequestHandler<GetRequestDetailQuer
             .FirstOrDefaultAsync(x => x.Id == request.Id && x.UserId == _currentUser.UserId, ct)
             ?? throw new NotFoundException("Request not found");
 
+        TomanPayerDetailDto? tomanPayer = null;
+        if (r.TomanPayerFullName is not null)
+            tomanPayer = new TomanPayerDetailDto(
+                r.TomanPayerFullName,
+                r.TomanPayerMobileNumber!
+            );
+
         return new RequestDetailDto(
             r.Id, r.Type, r.Currency, r.Amount, r.PricePreference,
             r.PaymentMethods.Select(p => p.ToString()).ToList(),
@@ -33,7 +40,8 @@ public class GetRequestDetailQueryHandler : IRequestHandler<GetRequestDetailQuer
                 f.Username, f.Email, f.EmailOrPhone,
                 f.Iban, f.Bic, f.BankName,
                 f.AccountNum, f.Swift, f.BankAddress
-            )).ToList()
+            )).ToList(),
+            tomanPayer
         );
     }
 }

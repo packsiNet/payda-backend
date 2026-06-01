@@ -86,7 +86,17 @@ Content-Type: application/json
 
 | فیلد | نوع | اجباری | توضیح |
 |---|---|---|---|
+| `tomanPayer` | `object` | بله | اطلاعات پرداخت‌کننده تومان |
 | `foreignAccounts` | `object[]` | بله | حداقل یک حساب خارجی |
+
+### ساختار `tomanPayer`
+
+اطلاعات شخصی که تومان را پرداخت می‌کند (ارسال‌کننده داخلی).
+
+| فیلد | نوع | اجباری | توضیح |
+|---|---|---|---|
+| `fullName` | `string` | بله | نام و نام خانوادگی |
+| `mobileNumber` | `string` | بله | شماره موبایل |
 
 ### ساختار هر آیتم در `foreignAccounts`
 
@@ -140,9 +150,13 @@ Content-Type: application/json
   "type": 1,
   "currency": 0,
   "amount": 500.0,
-  "rateType": 1,
-  "customRate": null,
+  "pricePreference": 0,
   "paymentMethods": [0],
+  "tomanPayer": {
+    "fullName": "علی محمدی",
+
+    "mobileNumber": "09121234567"
+  },
   "foreignAccounts": [
     {
       "method": 0,
@@ -161,9 +175,13 @@ Content-Type: application/json
   "type": 1,
   "currency": 0,
   "amount": 500.0,
-  "rateType": 2,
-  "customRate": 62000.0,
+  "pricePreference": 1,
   "paymentMethods": [0, 1, 3],
+  "tomanPayer": {
+    "fullName": "علی محمدی",
+
+    "mobileNumber": "09121234567"
+  },
   "foreignAccounts": [
     {
       "method": 0,
@@ -189,7 +207,7 @@ Content-Type: application/json
 
 ---
 
-## پاسخ موفق
+## پاسخ موفق (ثبت درخواست)
 
 ```
 HTTP 201 Created
@@ -198,3 +216,32 @@ HTTP 201 Created
 ```json
 { "id": "<uuid>" }
 ```
+
+---
+
+## GET /api/Requests/{id} — جزئیات درخواست
+
+پاسخ برای درخواست‌های `type: 1` (Receive) شامل `tomanPayer` می‌شود:
+
+```json
+{
+  "id": "uuid",
+  "type": 1,
+  "currency": 0,
+  "amount": 500.0,
+  "pricePreference": 0,
+  "paymentMethods": ["Revolut"],
+  "status": 0,
+  "expiresAt": "...",
+  "createdAt": "...",
+  "receiverId": null,
+  "tomanPayer": {
+    "fullName": "علی محمدی",
+
+    "mobileNumber": "09121234567"
+  },
+  "foreignAccounts": [...]
+}
+```
+
+برای درخواست‌های `type: 0` (Send)، فیلد `tomanPayer` برابر `null` است.

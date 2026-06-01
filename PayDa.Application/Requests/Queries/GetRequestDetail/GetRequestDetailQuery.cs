@@ -16,7 +16,13 @@ public record RequestDetailDto(
     DateTime ExpiresAt,
     DateTime CreatedAt,
     Guid? ReceiverId,
-    List<ForeignAccountDetailDto> ForeignAccounts
+    List<ForeignAccountDetailDto> ForeignAccounts,
+    TomanPayerDetailDto? TomanPayer
+);
+
+public record TomanPayerDetailDto(
+    string FullName,
+    string MobileNumber
 );
 
 public record ForeignAccountDetailDto(

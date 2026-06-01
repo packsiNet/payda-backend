@@ -28,6 +28,17 @@ public class CreateRequestCommandValidator : AbstractValidator<CreateRequestComm
             })
             .When(x => x.Type == RequestType.Send && x.NewReceiver is not null);
 
+        // Receive: TomanPayer required
+        RuleFor(x => x.TomanPayer)
+            .NotNull()
+            .When(x => x.Type == RequestType.Receive)
+            .ChildRules(tp =>
+            {
+                tp.RuleFor(t => t.FullName).NotEmpty().MaximumLength(200);
+                tp.RuleFor(t => t.MobileNumber).NotEmpty().MaximumLength(20);
+            })
+            .When(x => x.Type == RequestType.Receive && x.TomanPayer is not null);
+
         // Receive: at least one foreign account required
         RuleFor(x => x.ForeignAccounts)
             .NotEmpty()

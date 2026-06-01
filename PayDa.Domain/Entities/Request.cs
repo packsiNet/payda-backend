@@ -27,11 +27,17 @@ public class Request : BaseEntity
     public Guid? MatchId { get; private set; }
     public Match? Match { get; private set; }
 
+    // Receive type only — info about the person who pays Tomans
+    public string? TomanPayerFullName { get; private set; }
+    public string? TomanPayerMobileNumber { get; private set; }
+
     private Request() { }
 
     public static Request Create(Guid userId, RequestType type, Currency currency,
         decimal amount, PricePreference pricePreference,
-        List<PaymentMethod> paymentMethods, Guid? receiverId, DateTime expiresAt) => new()
+        List<PaymentMethod> paymentMethods, Guid? receiverId, DateTime expiresAt,
+        string? tomanPayerFullName = null,
+        string? tomanPayerMobileNumber = null) => new()
     {
         UserId = userId,
         Type = type,
@@ -41,7 +47,9 @@ public class Request : BaseEntity
         PaymentMethods = paymentMethods,
         ReceiverId = receiverId,
         ExpiresAt = expiresAt,
-        Status = RequestStatus.Pending
+        Status = RequestStatus.Pending,
+        TomanPayerFullName = tomanPayerFullName,
+        TomanPayerMobileNumber = tomanPayerMobileNumber
     };
 
     public void SetMatched(Guid matchId) { Status = RequestStatus.Matched; MatchId = matchId; UpdatedAt = DateTime.UtcNow; }

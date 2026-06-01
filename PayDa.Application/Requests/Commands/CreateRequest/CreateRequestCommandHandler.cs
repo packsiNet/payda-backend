@@ -81,7 +81,9 @@ public class CreateRequestCommandHandler : IRequestHandler<CreateRequestCommand,
             pricePreference: cmd.PricePreference,
             paymentMethods: cmd.PaymentMethods,
             receiverId: receiverId,
-            expiresAt: DateTime.UtcNow.AddHours(24)
+            expiresAt: DateTime.UtcNow.AddHours(24),
+            tomanPayerFullName: cmd.TomanPayer?.FullName,
+            tomanPayerMobileNumber: cmd.TomanPayer?.MobileNumber
         );
 
         _context.Requests.Add(request);
