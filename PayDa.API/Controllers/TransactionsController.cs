@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PayDa.Application.Transactions.Commands.AdminSettleTransaction;
 using PayDa.Application.Transactions.Commands.ConfirmForeignReceipt;
 using PayDa.Application.Transactions.Commands.ConfirmPayment;
 using PayDa.Application.Transactions.Commands.SettleTransaction;
@@ -57,11 +58,20 @@ public class TransactionsController : ControllerBase
         return NoContent();
     }
 
-    /// <summary>Receiver confirms foreign currency received — completes transaction</summary>
+    /// <summary>Receiver confirms foreign currency received — awaiting admin settlement</summary>
     [HttpPost("{id}/confirm-foreign")]
     public async Task<IActionResult> ConfirmForeignReceipt(Guid id)
     {
         await _sender.Send(new ConfirmForeignReceiptCommand(id));
+        return NoContent();
+    }
+
+    /// <summary>Admin settles toman payment to toman receiver and finalizes the match</summary>
+    [HttpPost("{id}/admin-settle")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> AdminSettle(Guid id)
+    {
+        await _sender.Send(new AdminSettleTransactionCommand(id));
         return NoContent();
     }
 }

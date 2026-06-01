@@ -35,11 +35,7 @@ public class ConfirmForeignReceiptCommandHandler : IRequestHandler<ConfirmForeig
         if (transaction.Match.ReceiverRequest.UserId != _currentUser.UserId)
             throw new ForbiddenException("Only the receiver can confirm the foreign receipt");
 
-        transaction.Complete();
-        transaction.Match.Complete();
-
-        transaction.Match.SenderRequest.User.IncrementCompletedTransactions();
-        transaction.Match.ReceiverRequest.User.IncrementCompletedTransactions();
+        transaction.MarkForeignReceiptConfirmed();
 
         await _context.SaveChangesAsync(ct);
     }

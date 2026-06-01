@@ -59,6 +59,12 @@ public class Transaction : BaseEntity
         UpdatedAt = DateTime.UtcNow;
     }
 
+    public void MarkForeignReceiptConfirmed()
+    {
+        Status = TransactionStatus.ForeignReceiptConfirmed;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
     public void Complete()
     {
         Status = TransactionStatus.Completed;

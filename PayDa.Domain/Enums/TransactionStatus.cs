@@ -7,5 +7,6 @@ public enum TransactionStatus
     TomanConfirmed,
     ForeignReceiptUploaded,
     Completed,
-    Disputed
+    Disputed,
+    ForeignReceiptConfirmed
 }
