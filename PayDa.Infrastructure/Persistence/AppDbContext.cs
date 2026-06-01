@@ -18,6 +18,7 @@ public class AppDbContext : DbContext, IAppDbContext
     public DbSet<Transaction> Transactions => Set<Transaction>();
     public DbSet<ExchangeRate> ExchangeRates => Set<ExchangeRate>();
     public DbSet<SystemConfig> SystemConfigs => Set<SystemConfig>();
+    public DbSet<TierCommission> TierCommissions => Set<TierCommission>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

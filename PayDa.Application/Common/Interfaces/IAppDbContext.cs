@@ -14,5 +14,6 @@ public interface IAppDbContext
     DbSet<Transaction> Transactions { get; }
     DbSet<ExchangeRate> ExchangeRates { get; }
     DbSet<SystemConfig> SystemConfigs { get; }
+    DbSet<TierCommission> TierCommissions { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
