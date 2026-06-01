@@ -1,3 +1,5 @@
+using System.Text;
+using System.Text.Json;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +10,7 @@ using PayDa.Application.Matches.Commands.RejectMatch;
 using PayDa.Application.Matches.Queries.GetMyMatches;
 using PayDa.Application.Matches.Queries.GetAdminPendingMatches;
 using PayDa.Application.Matches.Queries.GetPendingConfirmationMatches;
+using PayDa.Application.Matches.Queries.GetMatchPaymentInvoice;
 
 namespace PayDa.API.Controllers;
 
@@ -47,6 +50,15 @@ public class MatchesController : ControllerBase
     {
         var result = await _sender.Send(cmd);
         return Ok(new { matchId = result.MatchId, message = result.Message });
+    }
+
+    [HttpGet("{id}/payment-invoice")]
+    public async Task<IActionResult> GetPaymentInvoice(Guid id)
+    {
+        var invoice = await _sender.Send(new GetMatchPaymentInvoiceQuery(id));
+        var json = JsonSerializer.Serialize(invoice, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+        var encoded = Convert.ToBase64String(Encoding.UTF8.GetBytes(json));
+        return Ok(new { encoded });
     }
 
     [HttpGet("admin/pending-confirmation")]
