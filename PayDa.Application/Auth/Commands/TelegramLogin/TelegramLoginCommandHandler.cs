@@ -28,6 +28,7 @@ public class TelegramLoginCommandHandler : IRequestHandler<TelegramLoginCommand,
         var telegramUser = _telegramAuth.ParseInitData(request.InitData);
 
         var user = await _context.Users
+            .Include(u => u.Tier)
             .FirstOrDefaultAsync(u => u.TelegramId == telegramUser.Id, ct);
 
         bool isNewUser = user is null;
@@ -41,15 +42,36 @@ public class TelegramLoginCommandHandler : IRequestHandler<TelegramLoginCommand,
             user = User.Create(telegramUser.Id, telegramUser.Username, telegramUser.FirstName, telegramUser.LastName, telegramUser.PhotoUrl);
             user.UpgradeTier(bronzeTier.Id);
             _context.Users.Add(user);
+            await _context.SaveChangesAsync(ct);
+
+            user = await _context.Users
+                .Include(u => u.Tier)
+                .FirstAsync(u => u.Id == user.Id, ct);
         }
         else
         {
             user!.UpdateTelegramProfile(telegramUser.Username, telegramUser.FirstName, telegramUser.LastName, telegramUser.PhotoUrl);
+            await _context.SaveChangesAsync(ct);
         }
 
-        await _context.SaveChangesAsync(ct);
-
         var token = _jwtService.GenerateToken(user!);
-        return new TelegramLoginResult(token, isNewUser, user!.KycStatus);
+        return new TelegramLoginResult(
+            token,
+            isNewUser,
+            user.Id,
+            user.TelegramId,
+            user.TelegramUsername,
+            user.FirstName,
+            user.LastName,
+            user.KycStatus,
+            user.Role,
+            user.IsTrusted,
+            user.Tier.Name,
+            user.Tier.Order,
+            user.CompletedTransactionsCount,
+            user.PhoneNumber != null,
+            user.SelfieImageUrl,
+            user.DocumentImageUrl
+        );
     }
 }
