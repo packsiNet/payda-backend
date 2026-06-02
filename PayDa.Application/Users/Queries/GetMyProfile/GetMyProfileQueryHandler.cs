@@ -21,7 +21,7 @@ public class GetMyProfileQueryHandler : IRequestHandler<GetMyProfileQuery, UserP
         var user = await _context.Users
             .Include(u => u.Tier)
             .FirstOrDefaultAsync(u => u.Id == _currentUser.UserId, ct)
-            ?? throw new NotFoundException("User not found");
+            ?? throw new UnauthorizedException("Session expired, please login again");
 
         return new UserProfileDto(
             user.Id, user.TelegramId, user.TelegramUsername,

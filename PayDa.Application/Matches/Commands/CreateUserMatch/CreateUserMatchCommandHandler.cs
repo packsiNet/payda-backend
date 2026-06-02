@@ -145,7 +145,7 @@ public class CreateUserMatchCommandHandler : IRequestHandler<CreateUserMatchComm
         var user = await _context.Users
             .Include(u => u.Tier)
             .FirstOrDefaultAsync(u => u.Id == userId, ct)
-            ?? throw new NotFoundException("User not found");
+            ?? throw new UnauthorizedException("Session expired, please login again");
 
         if (user.KycStatus != KycStatus.Approved)
             throw new ForbiddenException("KYC not approved");

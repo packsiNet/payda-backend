@@ -21,7 +21,7 @@ public class SubmitKycCommandHandler : IRequestHandler<SubmitKycCommand>
     public async Task Handle(SubmitKycCommand cmd, CancellationToken ct)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == _currentUser.UserId, ct)
-            ?? throw new NotFoundException("User not found");
+            ?? throw new UnauthorizedException("Session expired, please login again");
 
         if (string.IsNullOrEmpty(user.PhoneNumber))
             throw new BadRequestException("Phone number must be verified before submitting KYC.");

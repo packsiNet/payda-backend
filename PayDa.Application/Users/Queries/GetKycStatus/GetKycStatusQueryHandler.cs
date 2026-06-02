@@ -21,7 +21,7 @@ public class GetKycStatusQueryHandler : IRequestHandler<GetKycStatusQuery, KycSt
     {
         var user = await _context.Users
             .FirstOrDefaultAsync(u => u.Id == _currentUser.UserId, ct)
-            ?? throw new NotFoundException("User not found");
+            ?? throw new UnauthorizedException("Session expired, please login again");
 
         var displayName = user.KycStatus switch
         {
