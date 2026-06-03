@@ -47,7 +47,7 @@ public class ExceptionHandlingMiddleware
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)statusCode;
 
-        object response = statusCode == HttpStatusCode.InternalServerError
+        object response = isDevelopment && statusCode == HttpStatusCode.InternalServerError
             ? new { message, errors, detail = exception.Message, stackTrace = exception.StackTrace }
             : new { message, errors };
 
