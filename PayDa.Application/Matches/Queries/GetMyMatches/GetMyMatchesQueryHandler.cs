@@ -54,10 +54,10 @@ public class GetMyMatchesQueryHandler : IRequestHandler<GetMyMatchesQuery, List<
                     myRequest.CreatedAt,
                     m.CreatedAt,
                     counterpartName,
-                    counterpart.Tier.Order,
-                    counterpart.Tier.Name,
+                    counterpart.Tier?.Order ?? 0,
+                    counterpart.Tier?.Name ?? string.Empty,
                     counterpart.IsTrusted,
-                    counterpartRequest.PaymentMethods.Select(p => p.ToString()).ToList(),
+                    counterpartRequest.PaymentMethods?.Select(p => p.ToString()).ToList() ?? [],
                     m.Transaction?.Id,
                     m.Transaction?.Status
                 );

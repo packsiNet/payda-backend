@@ -1,5 +1,7 @@
 using System.Net;
 using System.Text.Json;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 using PayDa.Application.Common.Exceptions;
 
 namespace PayDa.API.Middleware;
@@ -8,11 +10,13 @@ public class ExceptionHandlingMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly ILogger<ExceptionHandlingMiddleware> _logger;
+    private readonly IWebHostEnvironment _env;
 
-    public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
+    public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger, IWebHostEnvironment env)
     {
         _next = next;
         _logger = logger;
+        _env = env;
     }
 
     public async Task InvokeAsync(HttpContext context)
@@ -24,11 +28,11 @@ public class ExceptionHandlingMiddleware
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unhandled exception");
-            await HandleExceptionAsync(context, ex);
+            await HandleExceptionAsync(context, ex, _env.IsDevelopment());
         }
     }
 
-    private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
+    private static async Task HandleExceptionAsync(HttpContext context, Exception exception, bool isDevelopment)
     {
         var (statusCode, message, errors) = exception switch
         {
@@ -43,7 +47,10 @@ public class ExceptionHandlingMiddleware
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)statusCode;
 
-        var response = new { message, errors };
+        object response = isDevelopment && statusCode == HttpStatusCode.InternalServerError
+            ? new { message, errors, detail = exception.Message, stackTrace = exception.StackTrace }
+            : new { message, errors };
+
         await context.Response.WriteAsync(JsonSerializer.Serialize(response,
             new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }));
     }
