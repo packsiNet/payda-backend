@@ -30,7 +30,6 @@ public class GetMyMatchesQueryHandler : IRequestHandler<GetMyMatchesQuery, List<
             .ToListAsync(ct);
 
         return matches
-            .Where(m => m.Transaction is not null)
             .Select(m =>
             {
                 var isSender = m.SenderRequest.UserId == userId;
@@ -59,8 +58,8 @@ public class GetMyMatchesQueryHandler : IRequestHandler<GetMyMatchesQuery, List<
                     counterpart.Tier.Name,
                     counterpart.IsTrusted,
                     counterpartRequest.PaymentMethods.Select(p => p.ToString()).ToList(),
-                    m.Transaction!.Id,
-                    m.Transaction!.Status
+                    m.Transaction?.Id,
+                    m.Transaction?.Status
                 );
             })
             .ToList();
