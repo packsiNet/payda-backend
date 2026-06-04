@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PayDa.Application.Transactions.Commands.AdminSettleTransaction;
+using PayDa.Application.Transactions.Commands.DisputeTransaction;
 using PayDa.Application.Transactions.Commands.ConfirmForeignReceipt;
 using PayDa.Application.Transactions.Commands.ConfirmPayment;
 using PayDa.Application.Transactions.Commands.SettleTransaction;
@@ -70,6 +71,13 @@ public class TransactionsController : ControllerBase
     public async Task<IActionResult> ConfirmForeignReceipt(Guid id)
     {
         await _sender.Send(new ConfirmForeignReceiptCommand(id));
+        return NoContent();
+    }
+
+    [HttpPost("{id}/dispute")]
+    public async Task<IActionResult> Dispute(Guid id)
+    {
+        await _sender.Send(new DisputeTransactionCommand(id));
         return NoContent();
     }
 
