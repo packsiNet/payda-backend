@@ -21,8 +21,9 @@ public class ConfirmTomanPaymentCommandHandler : IRequestHandler<ConfirmTomanPay
             .FirstOrDefaultAsync(t => t.Id == cmd.TransactionId, ct)
             ?? throw new NotFoundException("Transaction not found");
 
-        if (transaction.Status != TransactionStatus.TomanPaymentDeclared)
-            throw new BadRequestException("Transaction is not in TomanPaymentDeclared state");
+        if (transaction.Status != TransactionStatus.WaitingForTomanPayment &&
+            transaction.Status != TransactionStatus.TomanPaymentDeclared)
+            throw new BadRequestException("Transaction is not in a confirmable toman payment state");
 
         transaction.ConfirmTomanPayment();
         await _context.SaveChangesAsync(ct);
