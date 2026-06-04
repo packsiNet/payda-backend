@@ -22,7 +22,9 @@ public class GetMyMatchesQueryHandler : IRequestHandler<GetMyMatchesQuery, List<
 
         var matches = await _context.Matches
             .Include(m => m.SenderRequest).ThenInclude(r => r.User).ThenInclude(u => u.Tier)
+            .Include(m => m.SenderRequest).ThenInclude(r => r.ForeignAccounts)
             .Include(m => m.ReceiverRequest).ThenInclude(r => r.User).ThenInclude(u => u.Tier)
+            .Include(m => m.ReceiverRequest).ThenInclude(r => r.ForeignAccounts)
             .Include(m => m.Transaction)
             .Where(m =>
                 m.SenderRequest.UserId == userId ||
@@ -63,7 +65,19 @@ public class GetMyMatchesQueryHandler : IRequestHandler<GetMyMatchesQuery, List<
                     counterpart.Tier?.Order ?? 0,
                     counterpart.Tier?.Name ?? string.Empty,
                     counterpart.IsTrusted,
-                    counterpartRequest.PaymentMethods?.Select(p => p.ToString()).ToList() ?? [],
+                    counterpartRequest.ForeignAccounts?.Select(a => new CounterpartPaymentMethodDto(
+                        a.Method.ToString(),
+                        a.FullName,
+                        a.Username,
+                        a.Email,
+                        a.EmailOrPhone,
+                        a.Iban,
+                        a.Bic,
+                        a.BankName,
+                        a.AccountNum,
+                        a.Swift,
+                        a.BankAddress
+                    )).ToList() ?? [],
                     m.Transaction?.Id,
                     flowStatus
                 );

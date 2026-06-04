@@ -20,7 +20,21 @@ public record MyMatchDto(
     int CounterpartLevel,
     string CounterpartLevelTitle,
     bool CounterpartIsTrusted,
-    List<string> CounterpartPaymentMethods,
+    List<CounterpartPaymentMethodDto> CounterpartPaymentMethods,
     Guid? TransactionId,
     MatchFlowStatus Status
+);
+
+public record CounterpartPaymentMethodDto(
+    string Method,
+    string FullName,
+    string? Username,
+    string? Email,
+    string? EmailOrPhone,
+    string? Iban,
+    string? Bic,
+    string? BankName,
+    string? AccountNum,
+    string? Swift,
+    string? BankAddress
 );
