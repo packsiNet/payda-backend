@@ -6,6 +6,7 @@ using PayDa.Application.Transactions.Commands.ConfirmForeignReceipt;
 using PayDa.Application.Transactions.Commands.ConfirmPayment;
 using PayDa.Application.Transactions.Commands.SettleTransaction;
 using PayDa.Application.Transactions.Commands.UploadScreenshot;
+using PayDa.Application.Transactions.Queries.GetAdminPendingTomanTransactions;
 using PayDa.Application.Transactions.Queries.GetMyTransactions;
 using PayDa.Application.Transactions.Queries.GetTransactionDetail;
 using PayDa.Domain.Enums;
@@ -40,6 +41,12 @@ public class TransactionsController : ControllerBase
         await _sender.Send(new DeclareTomanPaymentCommand(id));
         return NoContent();
     }
+
+    /// <summary>Admin: list transactions waiting for toman confirmation</summary>
+    [HttpGet("admin/pending-toman")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> GetAdminPendingToman()
+        => Ok(await _sender.Send(new GetAdminPendingTomanTransactionsQuery()));
 
     /// <summary>Admin confirms toman payment received</summary>
     [HttpPost("{id}/confirm-toman")]
