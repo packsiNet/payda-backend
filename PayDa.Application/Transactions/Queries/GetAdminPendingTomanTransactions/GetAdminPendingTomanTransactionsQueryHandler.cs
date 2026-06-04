@@ -25,8 +25,8 @@ public class GetAdminPendingTomanTransactionsQueryHandler
             .Include(t => t.Match)
                 .ThenInclude(m => m.ReceiverRequest)
                     .ThenInclude(r => r.User)
-            .Where(t => t.Status == TransactionStatus.TomanPaymentDeclared)
-            .OrderBy(t => t.TomanDeclaredAt)
+            .Where(t => t.Status == TransactionStatus.WaitingForTomanPayment)
+            .OrderBy(t => t.CreatedAt)
             .ToListAsync(ct);
 
         return transactions.Select(t =>
@@ -42,7 +42,7 @@ public class GetAdminPendingTomanTransactionsQueryHandler
                 match.SenderRequest.Amount,
                 match.SenderRequest.Currency.ToString(),
                 match.Price,
-                t.TomanDeclaredAt!.Value,
+                match.CreatedAt,
                 new AdminTomanPartyDto(
                     receiver.Id,
                     GetName(receiver),
