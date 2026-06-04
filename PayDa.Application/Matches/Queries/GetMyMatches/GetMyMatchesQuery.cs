@@ -22,5 +22,5 @@ public record MyMatchDto(
     bool CounterpartIsTrusted,
     List<string> CounterpartPaymentMethods,
     Guid? TransactionId,
-    TransactionStatus? TransactionStatus
+    MatchFlowStatus Status
 );

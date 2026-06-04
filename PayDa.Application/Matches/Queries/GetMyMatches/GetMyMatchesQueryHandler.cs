@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using PayDa.Application.Common.Interfaces;
+using PayDa.Domain.Enums;
 
 namespace PayDa.Application.Matches.Queries.GetMyMatches;
 
@@ -42,6 +43,11 @@ public class GetMyMatchesQueryHandler : IRequestHandler<GetMyMatchesQuery, List<
                     ? $"{counterpart.FirstName} {counterpart.LastName![0]}."
                     : counterpart.TelegramUsername ?? "Unknown";
 
+                var myConfirmed = isSender ? m.SenderConfirmed : m.ReceiverConfirmed;
+                var counterpartConfirmed = isSender ? m.ReceiverConfirmed : m.SenderConfirmed;
+
+                var flowStatus = ResolveFlowStatus(myConfirmed, counterpartConfirmed, m.Transaction?.Status);
+
                 return new MyMatchDto(
                     m.Id,
                     myRequest.Id,
@@ -59,9 +65,32 @@ public class GetMyMatchesQueryHandler : IRequestHandler<GetMyMatchesQuery, List<
                     counterpart.IsTrusted,
                     counterpartRequest.PaymentMethods?.Select(p => p.ToString()).ToList() ?? [],
                     m.Transaction?.Id,
-                    m.Transaction?.Status
+                    flowStatus
                 );
             })
             .ToList();
+    }
+
+    private static MatchFlowStatus ResolveFlowStatus(bool myConfirmed, bool counterpartConfirmed, TransactionStatus? txStatus)
+    {
+        if (txStatus != null)
+        {
+            return txStatus switch
+            {
+                TransactionStatus.WaitingForTomanPayment => MatchFlowStatus.WaitingForTomanPayment,
+                TransactionStatus.TomanPaymentDeclared => MatchFlowStatus.TomanPaymentDeclared,
+                TransactionStatus.TomanConfirmed => MatchFlowStatus.WaitingForForeignTransfer,
+                TransactionStatus.ForeignReceiptUploaded => MatchFlowStatus.ForeignReceiptUploaded,
+                TransactionStatus.ForeignReceiptConfirmed => MatchFlowStatus.Completed,
+                TransactionStatus.Completed => MatchFlowStatus.Completed,
+                TransactionStatus.Disputed => MatchFlowStatus.Disputed,
+                _ => MatchFlowStatus.WaitingForTomanPayment
+            };
+        }
+
+        if (myConfirmed && counterpartConfirmed) return MatchFlowStatus.WaitingForTomanPayment;
+        if (myConfirmed) return MatchFlowStatus.WaitingForCounterpartConfirmation;
+        if (counterpartConfirmed) return MatchFlowStatus.WaitingForMyConfirmation;
+        return MatchFlowStatus.WaitingForBothConfirmations;
     }
 }
