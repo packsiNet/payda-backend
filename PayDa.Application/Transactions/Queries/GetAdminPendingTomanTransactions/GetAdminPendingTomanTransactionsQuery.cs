@@ -11,7 +11,7 @@ public record AdminPendingTomanTransactionDto(
     decimal Amount,
     string Currency,
     decimal Price,
-    DateTime MatchDate,
+    DateTime? TomanDeclaredAt,
     AdminTomanPartyDto TomanPayer,
     AdminTomanPartyDto ForeignSender
 );
