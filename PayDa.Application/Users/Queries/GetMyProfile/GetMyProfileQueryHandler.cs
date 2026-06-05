@@ -30,6 +30,7 @@ public class GetMyProfileQueryHandler : IRequestHandler<GetMyProfileQuery, UserP
             user.Tier.Order, user.CompletedTransactionsCount,
             user.PhoneNumber != null,
             user.SelfieImageUrl,
-            user.DocumentImageUrl);
+            user.DocumentImageUrl,
+            user.ReferralCode);
     }
 }

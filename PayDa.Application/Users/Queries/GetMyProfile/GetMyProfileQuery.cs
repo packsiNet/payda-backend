@@ -19,5 +19,6 @@ public record UserProfileDto(
     int CompletedTransactionsCount,
     bool PhoneVerified,
     string? SelfieImageUrl,
-    string? DocumentImageUrl
+    string? DocumentImageUrl,
+    string ReferralCode
 );
