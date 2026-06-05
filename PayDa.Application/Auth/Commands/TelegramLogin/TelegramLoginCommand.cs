@@ -21,5 +21,6 @@ public record TelegramLoginResult(
     int CompletedTransactionsCount,
     bool PhoneVerified,
     string? SelfieImageUrl,
-    string? DocumentImageUrl
+    string? DocumentImageUrl,
+    string ReferralCode
 );

@@ -71,7 +71,8 @@ public class TelegramLoginCommandHandler : IRequestHandler<TelegramLoginCommand,
             user.CompletedTransactionsCount,
             user.PhoneNumber != null,
             user.SelfieImageUrl,
-            user.DocumentImageUrl
+            user.DocumentImageUrl,
+            user.ReferralCode
         );
     }
 }

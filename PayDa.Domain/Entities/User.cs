@@ -27,6 +27,9 @@ public class User : BaseEntity
     public Tier Tier { get; private set; } = default!;
     public int CompletedTransactionsCount { get; private set; } = 0;
 
+    public string ReferralCode { get; private set; } = default!;
+    public Guid? ReferredById { get; private set; }
+
     private readonly List<Request> _requests = new();
     public IReadOnlyCollection<Request> Requests => _requests.AsReadOnly();
 
@@ -41,8 +44,19 @@ public class User : BaseEntity
         TelegramUsername = username,
         FirstName = firstName,
         LastName = lastName,
-        ProfilePhotoUrl = profilePhotoUrl
+        ProfilePhotoUrl = profilePhotoUrl,
+        ReferralCode = Guid.NewGuid().ToString("N")[..8].ToUpper()
     };
+
+    public void ApplyReferral(Guid referredById)
+    {
+        if (ReferredById is not null)
+            throw new InvalidOperationException("Referral already applied.");
+        if (Id == referredById)
+            throw new InvalidOperationException("Cannot use own referral code.");
+        ReferredById = referredById;
+        UpdatedAt = DateTime.UtcNow;
+    }
 
     public void UpdateTelegramProfile(string? username, string? firstName, string? lastName, string? profilePhotoUrl)
     {
