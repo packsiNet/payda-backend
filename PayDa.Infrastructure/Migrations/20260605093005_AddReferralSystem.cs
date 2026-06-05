@@ -11,38 +11,24 @@ namespace PayDa.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
-                name: "ReferralCode",
-                table: "Users",
-                type: "character varying(8)",
-                maxLength: 8,
-                nullable: false,
-                defaultValue: "");
+            migrationBuilder.Sql("""
+                ALTER TABLE "Users" ADD COLUMN IF NOT EXISTS "ReferralCode" character varying(8) NOT NULL DEFAULT '';
+                ALTER TABLE "Users" ADD COLUMN IF NOT EXISTS "ReferredById" uuid NULL;
 
-            migrationBuilder.AddColumn<Guid>(
-                name: "ReferredById",
-                table: "Users",
-                type: "uuid",
-                nullable: true);
+                CREATE UNIQUE INDEX IF NOT EXISTS "IX_Users_ReferralCode" ON "Users" ("ReferralCode");
+                CREATE INDEX IF NOT EXISTS "IX_Users_ReferredById" ON "Users" ("ReferredById");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Users_ReferralCode",
-                table: "Users",
-                column: "ReferralCode",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Users_ReferredById",
-                table: "Users",
-                column: "ReferredById");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Users_Users_ReferredById",
-                table: "Users",
-                column: "ReferredById",
-                principalTable: "Users",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.SetNull);
+                DO $$ BEGIN
+                    IF NOT EXISTS (
+                        SELECT 1 FROM pg_constraint WHERE conname = 'FK_Users_Users_ReferredById'
+                    ) THEN
+                        ALTER TABLE "Users"
+                            ADD CONSTRAINT "FK_Users_Users_ReferredById"
+                            FOREIGN KEY ("ReferredById") REFERENCES "Users" ("Id")
+                            ON DELETE SET NULL;
+                    END IF;
+                END $$;
+                """);
         }
 
         /// <inheritdoc />
