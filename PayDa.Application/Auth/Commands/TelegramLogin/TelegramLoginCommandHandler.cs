@@ -42,26 +42,18 @@ public class TelegramLoginCommandHandler : IRequestHandler<TelegramLoginCommand,
             var referralCode = await GenerateUniqueReferralCodeAsync(ct);
             user = User.Create(telegramUser.Id, telegramUser.Username, telegramUser.FirstName, telegramUser.LastName, telegramUser.PhotoUrl, referralCode);
             user.UpgradeTier(bronzeTier.Id);
+            _context.Users.Add(user);
 
             if (!string.IsNullOrWhiteSpace(request.ReferralCode))
             {
+                var normalizedCode = request.ReferralCode.ToLower();
                 var referrer = await _context.Users
-                    .FirstOrDefaultAsync(u => u.ReferralCode == request.ReferralCode.ToLower(), ct);
+                    .FirstOrDefaultAsync(u => u.ReferralCode.ToLower() == normalizedCode, ct);
                 if (referrer is not null && referrer.TelegramId != telegramUser.Id)
                 {
                     user.ApplyReferral(referrer.Id);
-                    _context.Users.Add(user);
-                    await _context.SaveChangesAsync(ct);
                     _context.Referrals.Add(Domain.Entities.Referral.Create(referrer.Id, user.Id));
                 }
-                else
-                {
-                    _context.Users.Add(user);
-                }
-            }
-            else
-            {
-                _context.Users.Add(user);
             }
 
             await _context.SaveChangesAsync(ct);
