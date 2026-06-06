@@ -16,8 +16,22 @@ public class AuthController : ControllerBase
     [HttpPost("telegram-login")]
     public async Task<IActionResult> TelegramLogin([FromBody] TelegramLoginRequest req)
     {
-        var result = await _sender.Send(new TelegramLoginCommand(req.InitData));
-        return Ok(result);
+        try
+        {
+            var result = await _sender.Send(new TelegramLoginCommand(req.InitData));
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new
+            {
+                error = ex.Message,
+                type = ex.GetType().FullName,
+                stackTrace = ex.StackTrace,
+                innerError = ex.InnerException?.Message,
+                innerStackTrace = ex.InnerException?.StackTrace
+            });
+        }
     }
 
     [HttpPost("admin-login")]
