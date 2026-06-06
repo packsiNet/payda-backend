@@ -38,14 +38,14 @@ public class User : BaseEntity
 
     private User() { }
 
-    public static User Create(long telegramId, string? username, string? firstName, string? lastName, string? profilePhotoUrl) => new()
+    public static User Create(long telegramId, string? username, string? firstName, string? lastName, string? profilePhotoUrl, string referralCode) => new()
     {
         TelegramId = telegramId,
         TelegramUsername = username,
         FirstName = firstName,
         LastName = lastName,
         ProfilePhotoUrl = profilePhotoUrl,
-        ReferralCode = Guid.NewGuid().ToString("N")[..8].ToUpper()
+        ReferralCode = referralCode
     };
 
     public void ApplyReferral(Guid referredById)

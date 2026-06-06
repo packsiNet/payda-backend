@@ -15,5 +15,6 @@ public interface IAppDbContext
     DbSet<ExchangeRate> ExchangeRates { get; }
     DbSet<SystemConfig> SystemConfigs { get; }
     DbSet<TierCommission> TierCommissions { get; }
+    DbSet<PayDa.Domain.Entities.Referral> Referrals { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

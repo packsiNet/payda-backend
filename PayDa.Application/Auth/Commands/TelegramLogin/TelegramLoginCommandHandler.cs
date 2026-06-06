@@ -39,18 +39,31 @@ public class TelegramLoginCommandHandler : IRequestHandler<TelegramLoginCommand,
                 .OrderBy(t => t.Order)
                 .FirstAsync(ct);
 
-            user = User.Create(telegramUser.Id, telegramUser.Username, telegramUser.FirstName, telegramUser.LastName, telegramUser.PhotoUrl);
+            var referralCode = await GenerateUniqueReferralCodeAsync(ct);
+            user = User.Create(telegramUser.Id, telegramUser.Username, telegramUser.FirstName, telegramUser.LastName, telegramUser.PhotoUrl, referralCode);
             user.UpgradeTier(bronzeTier.Id);
 
             if (!string.IsNullOrWhiteSpace(request.ReferralCode))
             {
                 var referrer = await _context.Users
-                    .FirstOrDefaultAsync(u => u.ReferralCode == request.ReferralCode.ToUpper(), ct);
+                    .FirstOrDefaultAsync(u => u.ReferralCode == request.ReferralCode.ToLower(), ct);
                 if (referrer is not null && referrer.TelegramId != telegramUser.Id)
+                {
                     user.ApplyReferral(referrer.Id);
+                    _context.Users.Add(user);
+                    await _context.SaveChangesAsync(ct);
+                    _context.Referrals.Add(Domain.Entities.Referral.Create(referrer.Id, user.Id));
+                }
+                else
+                {
+                    _context.Users.Add(user);
+                }
+            }
+            else
+            {
+                _context.Users.Add(user);
             }
 
-            _context.Users.Add(user);
             await _context.SaveChangesAsync(ct);
 
             user = await _context.Users
@@ -83,5 +96,16 @@ public class TelegramLoginCommandHandler : IRequestHandler<TelegramLoginCommand,
             user.DocumentImageUrl,
             user.ReferralCode
         );
+    }
+
+    private async Task<string> GenerateUniqueReferralCodeAsync(CancellationToken ct)
+    {
+        string code;
+        do
+        {
+            code = "pd" + Random.Shared.Next(0, 1_000_000).ToString("D6");
+        }
+        while (await _context.Users.AnyAsync(u => u.ReferralCode == code, ct));
+        return code;
     }
 }

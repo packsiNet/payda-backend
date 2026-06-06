@@ -2,7 +2,6 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using PayDa.Application.Common.Exceptions;
 using PayDa.Application.Common.Interfaces;
-
 namespace PayDa.Application.Referral.Commands.ApplyReferralCode;
 
 public class ApplyReferralCodeCommandHandler : IRequestHandler<ApplyReferralCodeCommand>
@@ -30,6 +29,7 @@ public class ApplyReferralCodeCommandHandler : IRequestHandler<ApplyReferralCode
             ?? throw new NotFoundException("Invalid referral code.");
 
         user.ApplyReferral(referrer.Id);
+        _context.Referrals.Add(Domain.Entities.Referral.Create(referrer.Id, user.Id));
         await _context.SaveChangesAsync(ct);
     }
 }
