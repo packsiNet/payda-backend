@@ -41,6 +41,15 @@ public class TelegramLoginCommandHandler : IRequestHandler<TelegramLoginCommand,
 
             user = User.Create(telegramUser.Id, telegramUser.Username, telegramUser.FirstName, telegramUser.LastName, telegramUser.PhotoUrl);
             user.UpgradeTier(bronzeTier.Id);
+
+            if (!string.IsNullOrWhiteSpace(request.ReferralCode))
+            {
+                var referrer = await _context.Users
+                    .FirstOrDefaultAsync(u => u.ReferralCode == request.ReferralCode.ToUpper(), ct);
+                if (referrer is not null && referrer.TelegramId != telegramUser.Id)
+                    user.ApplyReferral(referrer.Id);
+            }
+
             _context.Users.Add(user);
             await _context.SaveChangesAsync(ct);
 

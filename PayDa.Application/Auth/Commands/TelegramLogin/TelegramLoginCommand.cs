@@ -3,7 +3,7 @@ using PayDa.Domain.Enums;
 
 namespace PayDa.Application.Auth.Commands.TelegramLogin;
 
-public record TelegramLoginCommand(string InitData) : IRequest<TelegramLoginResult>;
+public record TelegramLoginCommand(string InitData, string? ReferralCode = null) : IRequest<TelegramLoginResult>;
 
 public record TelegramLoginResult(
     string Token,
