@@ -38,6 +38,8 @@ public class DevController : ControllerBase
         await _db.Database.ExecuteSqlRawAsync("DELETE FROM \"RequestForeignAccounts\"");
         await _db.Database.ExecuteSqlRawAsync("DELETE FROM \"Requests\"");
         await _db.Database.ExecuteSqlRawAsync("DELETE FROM \"Receivers\"");
+        await _db.Database.ExecuteSqlRawAsync("DELETE FROM \"Referrals\"");
+        await _db.Database.ExecuteSqlRawAsync("UPDATE \"Users\" SET \"ReferredById\" = NULL");
         await _db.Database.ExecuteSqlRawAsync("DELETE FROM \"Users\"");
 
         return Ok(new { message = "Database reset. Seed data preserved." });
