@@ -6,7 +6,7 @@
 #    SERVER_PORT               — پورت SSH (معمولاً 22)
 #    SERVER_USER               — کاربر SSH (باید root یا passwordless-sudo باشد)
 #    SERVER_SSH_KEY            — محتوای private key به صورت کامل
-#    APP_URL                   — آدرس پابلیک اپلیکیشن (https://api.packsi.net)
+#    APP_URL                   — آدرس پابلیک اپلیکیشن (https://payda.api.packsi.net)
 #    DB_SA_PASSWORD            — پسورد SA دیتابیس  →  پیشنهاد: P@yDa#Sql2025!SecureXZ9
 #    JWT_SECRET                — کلید JWT (حداقل 32 کاراکتر) → پیشنهاد: PayDaJwt@S3cure2025#SecretKeyXZ9abcde
 #    TELEGRAM_BOT_TOKEN        — توکن ربات تلگرام
@@ -221,7 +221,7 @@ jobs:
               listen [::]:80;
               server_name api.packsi.net www.api.packsi.net;
           
-              return 301 https://api.packsi.net$request_uri;
+              return 301 https://payda.api.packsi.net$request_uri;
           }
           
           server {
